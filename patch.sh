@@ -74,6 +74,10 @@ cherrypick () {
 }
 
 external_git () {
+
+	#v4.4.9
+	git revert --no-edit 87261de30fd8e5ebd441cd2f05df73ddf04c2af2
+
 	git_tag="socfpga-4.4"
 	echo "pulling: ${git_tag}"
 	git pull ${git_opts} ${git_patchset} ${git_tag}
@@ -154,9 +158,10 @@ aufs4 () {
 	fi
 
 	${git} "${DIR}/patches/aufs4/0005-merge-aufs4.patch"
+	${git} "${DIR}/patches/aufs4/0006-aufs-call-mutex.owner-only-when-DEBUG_MUTEXES-or-MUT.patch"
 
 	if [ "x${regenerate}" = "xenable" ] ; then
-		git format-patch -5 -o ../patches/aufs4/
+		git format-patch -6 -o ../patches/aufs4/
 		exit 2
 	fi
 }
@@ -191,7 +196,7 @@ local_patch () {
 }
 
 external_git
-#aufs4
+aufs4
 rt
 #local_patch
 
