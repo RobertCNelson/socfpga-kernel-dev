@@ -1,6 +1,6 @@
-From 006abdf936d13b748ca306ffbdf49dde79d31219 Mon Sep 17 00:00:00 2001
+From 39e56945066eb7adbf5f155f1d463df1ac29348e Mon Sep 17 00:00:00 2001
 From: Robert Nelson <robertcnelson@gmail.com>
-Date: Wed, 8 Jun 2016 15:29:57 -0500
+Date: Tue, 9 Aug 2016 13:21:38 -0500
 Subject: [PATCH 4/6] merge: aufs4-standalone
 
 Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
@@ -9,6 +9,7 @@ Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
  fs/exec.c                |  1 +
  fs/fcntl.c               |  1 +
  fs/file_table.c          |  4 ++++
+ fs/inode.c               |  1 +
  fs/namespace.c           |  2 ++
  fs/notify/group.c        |  4 ++++
  fs/notify/mark.c         |  4 ++++
@@ -20,10 +21,10 @@ Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
  security/commoncap.c     |  2 ++
  security/device_cgroup.c |  2 ++
  security/security.c      | 10 ++++++++++
- 15 files changed, 39 insertions(+)
+ 16 files changed, 40 insertions(+)
 
 diff --git a/fs/dcache.c b/fs/dcache.c
-index 580e880..6bdabe2 100644
+index b27091c..51dd687 100644
 --- a/fs/dcache.c
 +++ b/fs/dcache.c
 @@ -1261,6 +1261,7 @@ rename_retry:
@@ -35,10 +36,10 @@ index 580e880..6bdabe2 100644
  /*
   * Search for at least 1 mount point in the dentry's subdirs.
 diff --git a/fs/exec.c b/fs/exec.c
-index dcd4ac7..09a7818 100644
+index c4010b8..c2b225f 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
-@@ -103,6 +103,7 @@ bool path_noexec(const struct path *path)
+@@ -104,6 +104,7 @@ bool path_noexec(const struct path *path)
  	return (path->mnt->mnt_flags & MNT_NOEXEC) ||
  	       (path->mnt->mnt_sb->s_iflags & SB_I_NOEXEC);
  }
@@ -94,8 +95,20 @@ index ad17e05..ae9f267 100644
  
  void __init files_init(void)
  { 
+diff --git a/fs/inode.c b/fs/inode.c
+index bae35a9..a41481e 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -1599,6 +1599,7 @@ int update_time(struct inode *inode, struct timespec *time, int flags)
+ 
+ 	return update_time(inode, time, flags);
+ }
++EXPORT_SYMBOL_GPL(update_time);
+ 
+ /**
+  *	touch_atime	-	update the access time
 diff --git a/fs/namespace.c b/fs/namespace.c
-index 4fb1691..97654d2 100644
+index 783004a..44abb2d 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
 @@ -463,6 +463,7 @@ void __mnt_drop_write(struct vfsmount *mnt)
@@ -207,7 +220,7 @@ index 081d3d6..b4359e4 100644
  static int do_dentry_open(struct file *f,
  			  struct inode *inode,
 diff --git a/fs/read_write.c b/fs/read_write.c
-index c8b5b7a..9461d12 100644
+index 0ebcdc5..0a43d7b 100644
 --- a/fs/read_write.c
 +++ b/fs/read_write.c
 @@ -544,6 +544,7 @@ vfs_readf_t vfs_readf(struct file *file)
@@ -227,7 +240,7 @@ index c8b5b7a..9461d12 100644
  ssize_t __kernel_write(struct file *file, const char *buf, size_t count, loff_t *pos)
  {
 diff --git a/fs/splice.c b/fs/splice.c
-index 337bb9d..3d8407c 100644
+index 9326c2a..0606690 100644
 --- a/fs/splice.c
 +++ b/fs/splice.c
 @@ -1124,6 +1124,7 @@ long do_splice_from(struct pipe_inode_info *pipe, struct file *out,
@@ -238,7 +251,7 @@ index 337bb9d..3d8407c 100644
  
  /*
   * Attempt to initiate a splice from a file to a pipe.
-@@ -1150,6 +1151,7 @@ long do_splice_to(struct file *in, loff_t *ppos,
+@@ -1153,6 +1154,7 @@ long do_splice_to(struct file *in, loff_t *ppos,
  
  	return splice_read(in, ppos, pipe, len, flags);
  }
@@ -307,7 +320,7 @@ index 03c1652..f88c84b 100644
  int devcgroup_inode_mknod(int mode, dev_t dev)
  {
 diff --git a/security/security.c b/security/security.c
-index e8ffd92..51fa026 100644
+index 3644b03..593879b 100644
 --- a/security/security.c
 +++ b/security/security.c
 @@ -433,6 +433,7 @@ int security_path_rmdir(struct path *dir, struct dentry *dentry)

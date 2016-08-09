@@ -74,11 +74,7 @@ cherrypick () {
 }
 
 external_git () {
-
-	#v4.5.3
-	git revert --no-edit 800a0b8a973b4262c92c228043cd17455cdf1a15
-
-	git_tag="socfpga-4.5"
+	git_tag="socfpga-4.6"
 	echo "pulling: ${git_tag}"
 	git pull ${git_opts} ${git_patchset} ${git_tag}
 }
@@ -197,7 +193,7 @@ local_patch () {
 
 external_git
 aufs4
-#rt
+rt
 #local_patch
 
 packaging () {

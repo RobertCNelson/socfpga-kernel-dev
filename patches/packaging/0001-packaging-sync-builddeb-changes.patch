@@ -1,6 +1,6 @@
-From 0a189416eb9922e3ba9ed5daeec5ed66af1c0ae6 Mon Sep 17 00:00:00 2001
+From e1bafe50a8b628e77ed75513f1c3da24cf23e203 Mon Sep 17 00:00:00 2001
 From: Robert Nelson <robertcnelson@gmail.com>
-Date: Tue, 9 Aug 2016 13:03:14 -0500
+Date: Tue, 9 Aug 2016 13:27:03 -0500
 Subject: [PATCH] packaging: sync builddeb changes
 
 Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
