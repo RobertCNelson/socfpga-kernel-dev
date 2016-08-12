@@ -1,0 +1,29 @@
+From b16e5447d9f6c2e7213df6184a5d128802f7d273 Mon Sep 17 00:00:00 2001
+From: Robert Nelson <robertcnelson@gmail.com>
+Date: Fri, 12 Aug 2016 11:22:20 -0500
+Subject: [PATCH] socfpga_cyclone5_de0_sockit: add i2c1 (ltc connector)
+
+Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
+---
+ arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts b/arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts
+index afea364..aa8b38c 100644
+--- a/arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts
++++ b/arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts
+@@ -97,6 +97,11 @@
+ 	};
+ };
+ 
++&i2c1 {
++	status = "okay";
++	speed-mode = <0>;
++};
++
+ &mmc0 {
+ 	vmmc-supply = <&regulator_3_3v>;
+ 	vqmmc-supply = <&regulator_3_3v>;
+-- 
+2.8.1
+
