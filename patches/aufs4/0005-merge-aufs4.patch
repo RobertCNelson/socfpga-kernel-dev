@@ -1,7 +1,7 @@
-From c4025673a3c528c0748585e6387f41274198f96e Mon Sep 17 00:00:00 2001
+From abc9615e5aee6965051fb09f4c8405f8a7c96870 Mon Sep 17 00:00:00 2001
 From: Robert Nelson <robertcnelson@gmail.com>
-Date: Tue, 9 Aug 2016 13:22:24 -0500
-Subject: [PATCH 5/6] merge: aufs4
+Date: Wed, 23 Nov 2016 12:01:40 -0600
+Subject: [PATCH 5/5] merge: aufs4
 
 Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
 ---
@@ -23,20 +23,20 @@ Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
  fs/aufs/Kconfig                                    |  185 ++
  fs/aufs/Makefile                                   |   44 +
  fs/aufs/aufs.h                                     |   59 +
- fs/aufs/branch.c                                   | 1408 +++++++++++++++
+ fs/aufs/branch.c                                   | 1412 +++++++++++++++
  fs/aufs/branch.h                                   |  309 ++++
  fs/aufs/conf.mk                                    |   38 +
  fs/aufs/cpup.c                                     | 1383 +++++++++++++++
  fs/aufs/cpup.h                                     |   94 +
- fs/aufs/dbgaufs.c                                  |  432 +++++
+ fs/aufs/dbgaufs.c                                  |  438 +++++
  fs/aufs/dbgaufs.h                                  |   48 +
- fs/aufs/dcsub.c                                    |  224 +++
+ fs/aufs/dcsub.c                                    |  225 +++
  fs/aufs/dcsub.h                                    |  136 ++
  fs/aufs/debug.c                                    |  440 +++++
  fs/aufs/debug.h                                    |  225 +++
- fs/aufs/dentry.c                                   | 1128 ++++++++++++
+ fs/aufs/dentry.c                                   | 1130 ++++++++++++
  fs/aufs/dentry.h                                   |  255 +++
- fs/aufs/dinfo.c                                    |  552 ++++++
+ fs/aufs/dinfo.c                                    |  553 ++++++
  fs/aufs/dir.c                                      |  762 ++++++++
  fs/aufs/dir.h                                      |  137 ++
  fs/aufs/dynop.c                                    |  369 ++++
@@ -44,26 +44,26 @@ Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
  fs/aufs/export.c                                   |  837 +++++++++
  fs/aufs/f_op.c                                     |  772 ++++++++
  fs/aufs/fhsm.c                                     |  426 +++++
- fs/aufs/file.c                                     |  846 +++++++++
+ fs/aufs/file.c                                     |  851 +++++++++
  fs/aufs/file.h                                     |  294 ++++
  fs/aufs/finfo.c                                    |  151 ++
  fs/aufs/fstype.h                                   |  400 +++++
  fs/aufs/hfsnotify.c                                |  287 +++
  fs/aufs/hfsplus.c                                  |   56 +
  fs/aufs/hnotify.c                                  |  723 ++++++++
- fs/aufs/i_op.c                                     | 1412 +++++++++++++++
+ fs/aufs/i_op.c                                     | 1448 +++++++++++++++
  fs/aufs/i_op_add.c                                 |  924 ++++++++++
  fs/aufs/i_op_del.c                                 |  511 ++++++
  fs/aufs/i_op_ren.c                                 | 1015 +++++++++++
- fs/aufs/iinfo.c                                    |  284 +++
- fs/aufs/inode.c                                    |  517 ++++++
+ fs/aufs/iinfo.c                                    |  285 +++
+ fs/aufs/inode.c                                    |  519 ++++++
  fs/aufs/inode.h                                    |  700 ++++++++
  fs/aufs/ioctl.c                                    |  219 +++
- fs/aufs/loop.c                                     |  146 ++
+ fs/aufs/loop.c                                     |  147 ++
  fs/aufs/loop.h                                     |   52 +
  fs/aufs/magic.mk                                   |   30 +
- fs/aufs/module.c                                   |  289 +++
- fs/aufs/module.h                                   |  144 ++
+ fs/aufs/module.c                                   |  333 ++++
+ fs/aufs/module.h                                   |  156 ++
  fs/aufs/mvdown.c                                   |  704 ++++++++
  fs/aufs/opts.c                                     | 1860 ++++++++++++++++++++
  fs/aufs/opts.h                                     |  211 +++
@@ -71,9 +71,9 @@ Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
  fs/aufs/poll.c                                     |   52 +
  fs/aufs/posix_acl.c                                |   98 ++
  fs/aufs/procfs.c                                   |  169 ++
- fs/aufs/rdu.c                                      |  389 ++++
+ fs/aufs/rdu.c                                      |  381 ++++
  fs/aufs/rwsem.h                                    |  198 +++
- fs/aufs/sbinfo.c                                   |  354 ++++
+ fs/aufs/sbinfo.c                                   |  355 ++++
  fs/aufs/spl.h                                      |  113 ++
  fs/aufs/super.c                                    | 1038 +++++++++++
  fs/aufs/super.h                                    |  638 +++++++
@@ -81,18 +81,18 @@ Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
  fs/aufs/sysaufs.h                                  |  101 ++
  fs/aufs/sysfs.c                                    |  376 ++++
  fs/aufs/sysrq.c                                    |  157 ++
- fs/aufs/vdir.c                                     |  898 ++++++++++
+ fs/aufs/vdir.c                                     |  900 ++++++++++
  fs/aufs/vfsub.c                                    |  884 ++++++++++
  fs/aufs/vfsub.h                                    |  316 ++++
  fs/aufs/wbr_policy.c                               |  765 ++++++++
  fs/aufs/whout.c                                    | 1060 +++++++++++
  fs/aufs/whout.h                                    |   85 +
  fs/aufs/wkq.c                                      |  213 +++
- fs/aufs/wkq.h                                      |   91 +
- fs/aufs/xattr.c                                    |  346 ++++
+ fs/aufs/wkq.h                                      |   93 +
+ fs/aufs/xattr.c                                    |  347 ++++
  fs/aufs/xino.c                                     | 1318 ++++++++++++++
  include/uapi/linux/aufs_type.h                     |  419 +++++
- 87 files changed, 34490 insertions(+)
+ 87 files changed, 34603 insertions(+)
  create mode 100644 Documentation/ABI/testing/debugfs-aufs
  create mode 100644 Documentation/ABI/testing/sysfs-aufs
  create mode 100644 Documentation/filesystems/aufs/README
@@ -2261,10 +2261,10 @@ index 0000000..e48d268
 +#endif /* __AUFS_H__ */
 diff --git a/fs/aufs/branch.c b/fs/aufs/branch.c
 new file mode 100644
-index 0000000..cdd1b46
+index 0000000..66495d2
 --- /dev/null
 +++ b/fs/aufs/branch.c
-@@ -0,0 +1,1408 @@
+@@ -0,0 +1,1412 @@
 +/*
 + * Copyright (C) 2005-2016 Junjiro R. Okajima
 + *
@@ -2421,12 +2421,12 @@ index 0000000..cdd1b46
 +			goto out_wbr;
 +	}
 +
-+	err = au_sbr_realloc(au_sbi(sb), new_nbranch);
++	err = au_sbr_realloc(au_sbi(sb), new_nbranch, /*may_shrink*/0);
 +	if (!err)
-+		err = au_di_realloc(au_di(root), new_nbranch);
++		err = au_di_realloc(au_di(root), new_nbranch, /*may_shrink*/0);
 +	if (!err) {
 +		inode = d_inode(root);
-+		err = au_hinode_realloc(au_ii(inode), new_nbranch);
++		err = au_hinode_realloc(au_ii(inode), new_nbranch, /*may_shrink*/0);
 +	}
 +	if (!err)
 +		return add_branch; /* success */
@@ -2763,6 +2763,7 @@ index 0000000..cdd1b46
 +	root = sb->s_root;
 +	root_inode = d_inode(root);
 +	IMustLock(root_inode);
++	IiMustWriteLock(root_inode);
 +	err = test_add(sb, add, remount);
 +	if (unlikely(err < 0))
 +		goto out;
@@ -3169,7 +3170,8 @@ index 0000000..cdd1b46
 +	sbinfo->si_branch[0 + bbot] = NULL;
 +	sbinfo->si_bbot--;
 +
-+	p = krealloc(sbinfo->si_branch, sizeof(*p) * bbot, AuGFP_SBILIST);
++	p = au_krealloc(sbinfo->si_branch, sizeof(*p) * bbot, AuGFP_SBILIST,
++			/*may_shrink*/1);
 +	if (p)
 +		sbinfo->si_branch = p;
 +	/* harmless error */
@@ -3188,7 +3190,8 @@ index 0000000..cdd1b46
 +	/* au_h_dentry_init(au_hdentry(dinfo, bbot); */
 +	dinfo->di_bbot--;
 +
-+	p = krealloc(dinfo->di_hdentry, sizeof(*p) * bbot, AuGFP_SBILIST);
++	p = au_krealloc(dinfo->di_hdentry, sizeof(*p) * bbot, AuGFP_SBILIST,
++			/*may_shrink*/1);
 +	if (p)
 +		dinfo->di_hdentry = p;
 +	/* harmless error */
@@ -3207,7 +3210,8 @@ index 0000000..cdd1b46
 +	/* au_hinode_init(au_hinode(iinfo, bbot)); */
 +	iinfo->ii_bbot--;
 +
-+	p = krealloc(iinfo->ii_hinode, sizeof(*p) * bbot, AuGFP_SBILIST);
++	p = au_krealloc(iinfo->ii_hinode, sizeof(*p) * bbot, AuGFP_SBILIST,
++			/*may_shrink*/1);
 +	if (p)
 +		iinfo->ii_hinode = p;
 +	/* harmless error */
@@ -3675,7 +3679,7 @@ index 0000000..cdd1b46
 +}
 diff --git a/fs/aufs/branch.h b/fs/aufs/branch.h
 new file mode 100644
-index 0000000..bbfa76b1
+index 0000000..bbfa76b
 --- /dev/null
 +++ b/fs/aufs/branch.h
 @@ -0,0 +1,309 @@
@@ -5523,10 +5527,10 @@ index 0000000..7721429
 +#endif /* __AUFS_CPUP_H__ */
 diff --git a/fs/aufs/dbgaufs.c b/fs/aufs/dbgaufs.c
 new file mode 100644
-index 0000000..a0f4934
+index 0000000..4ab45c0
 --- /dev/null
 +++ b/fs/aufs/dbgaufs.c
-@@ -0,0 +1,432 @@
+@@ -0,0 +1,438 @@
 +/*
 + * Copyright (C) 2005-2016 Junjiro R. Okajima
 + *
@@ -5798,7 +5802,10 @@ index 0000000..a0f4934
 +	for (; bindex <= bbot; bindex++) {
 +		br = au_sbr(sb, bindex);
 +		xi = &br->br_xino;
++		/* debugfs acquires the parent i_mutex */
++		lockdep_off();
 +		debugfs_remove(xi->xi_dbgaufs);
++		lockdep_on();
 +		xi->xi_dbgaufs = NULL;
 +	}
 +}
@@ -5823,8 +5830,11 @@ index 0000000..a0f4934
 +		br = au_sbr(sb, bindex);
 +		xi = &br->br_xino;
 +		AuDebugOn(xi->xi_dbgaufs);
++		/* debugfs acquires the parent i_mutex */
++		lockdep_off();
 +		xi->xi_dbgaufs = debugfs_create_file(name, dbgaufs_mode, parent,
 +						     sbinfo, &dbgaufs_xino_fop);
++		lockdep_on();
 +		/* ignore an error */
 +		if (unlikely(!xi->xi_dbgaufs))
 +			AuWarn1("failed %s under debugfs\n", name);
@@ -6015,10 +6025,10 @@ index 0000000..d1e09bd
 +#endif /* __DBGAUFS_H__ */
 diff --git a/fs/aufs/dcsub.c b/fs/aufs/dcsub.c
 new file mode 100644
-index 0000000..a88a26d
+index 0000000..583ba75
 --- /dev/null
 +++ b/fs/aufs/dcsub.c
-@@ -0,0 +1,224 @@
+@@ -0,0 +1,225 @@
 +/*
 + * Copyright (C) 2005-2016 Junjiro R. Okajima
 + *
@@ -6103,7 +6113,8 @@ index 0000000..a88a26d
 +		err = -ENOMEM;
 +		sz = dpages->ndpage * sizeof(*dpages->dpages);
 +		p = au_kzrealloc(dpages->dpages, sz,
-+				 sz + sizeof(*dpages->dpages), gfp);
++				 sz + sizeof(*dpages->dpages), gfp,
++				 /*may_shrink*/0);
 +		if (unlikely(!p))
 +			goto out;
 +
@@ -7064,10 +7075,10 @@ index 0000000..cd5fc3f
 +#endif /* __AUFS_DEBUG_H__ */
 diff --git a/fs/aufs/dentry.c b/fs/aufs/dentry.c
 new file mode 100644
-index 0000000..d6867c8
+index 0000000..0b6a3d4
 --- /dev/null
 +++ b/fs/aufs/dentry.c
-@@ -0,0 +1,1128 @@
+@@ -0,0 +1,1130 @@
 +/*
 + * Copyright (C) 2005-2016 Junjiro R. Okajima
 + *
@@ -7119,7 +7130,7 @@ index 0000000..d6867c8
 +	br = au_sbr(dentry->d_sb, bindex);
 +	wh_able = !!au_br_whable(br->br_perm);
 +	if (wh_able)
-+		wh_found = au_wh_test(h_parent, wh_name, /*try_sio*/0);
++		wh_found = au_wh_test(h_parent, wh_name, ignore_perm);
 +	h_dentry = ERR_PTR(wh_found);
 +	if (!wh_found)
 +		goto real_lookup;
@@ -7784,7 +7795,7 @@ index 0000000..d6867c8
 +
 +int au_refresh_dentry(struct dentry *dentry, struct dentry *parent)
 +{
-+	int err, ebrange;
++	int err, ebrange, nbr;
 +	unsigned int sigen;
 +	struct au_dinfo *dinfo, *tmp;
 +	struct super_block *sb;
@@ -7800,8 +7811,9 @@ index 0000000..d6867c8
 +	if (unlikely(err))
 +		goto out;
 +
++	nbr = au_sbbot(sb) + 1;
 +	dinfo = au_di(dentry);
-+	err = au_di_realloc(dinfo, au_sbbot(sb) + 1);
++	err = au_di_realloc(dinfo, nbr, /*may_shrink*/0);
 +	if (unlikely(err))
 +		goto out;
 +	ebrange = au_dbrange_test(dentry);
@@ -7844,6 +7856,7 @@ index 0000000..d6867c8
 +		au_dbg_verify_dinode(dentry);
 +		AuTraceErr(err);
 +	}
++	au_di_realloc(dinfo, nbr, /*may_shrink*/1); /* harmless if err */
 +	au_rw_write_unlock(&tmp->di_rwsem);
 +	au_di_free(tmp);
 +	if (unlikely(err))
@@ -8198,7 +8211,7 @@ index 0000000..d6867c8
 +};
 diff --git a/fs/aufs/dentry.h b/fs/aufs/dentry.h
 new file mode 100644
-index 0000000..94a3753
+index 0000000..9ea6eddf
 --- /dev/null
 +++ b/fs/aufs/dentry.h
 @@ -0,0 +1,255 @@
@@ -8283,7 +8296,7 @@ index 0000000..94a3753
 +void au_di_cp(struct au_dinfo *dst, struct au_dinfo *src);
 +int au_di_init(struct dentry *dentry);
 +void au_di_fin(struct dentry *dentry);
-+int au_di_realloc(struct au_dinfo *dinfo, int nbr);
++int au_di_realloc(struct au_dinfo *dinfo, int nbr, int may_shrink);
 +
 +void di_read_lock(struct dentry *d, int flags, unsigned int lsc);
 +void di_read_unlock(struct dentry *d, int flags);
@@ -8459,10 +8472,10 @@ index 0000000..94a3753
 +#endif /* __AUFS_DENTRY_H__ */
 diff --git a/fs/aufs/dinfo.c b/fs/aufs/dinfo.c
 new file mode 100644
-index 0000000..25e71e9
+index 0000000..3bc31e2
 --- /dev/null
 +++ b/fs/aufs/dinfo.c
-@@ -0,0 +1,552 @@
+@@ -0,0 +1,553 @@
 +/*
 + * Copyright (C) 2005-2016 Junjiro R. Okajima
 + *
@@ -8607,7 +8620,7 @@ index 0000000..25e71e9
 +	au_di_free(dinfo);
 +}
 +
-+int au_di_realloc(struct au_dinfo *dinfo, int nbr)
++int au_di_realloc(struct au_dinfo *dinfo, int nbr, int may_shrink)
 +{
 +	int err, sz;
 +	struct au_hdentry *hdp;
@@ -8618,7 +8631,8 @@ index 0000000..25e71e9
 +	sz = sizeof(*hdp) * (dinfo->di_bbot + 1);
 +	if (!sz)
 +		sz = sizeof(*hdp);
-+	hdp = au_kzrealloc(dinfo->di_hdentry, sz, sizeof(*hdp) * nbr, GFP_NOFS);
++	hdp = au_kzrealloc(dinfo->di_hdentry, sz, sizeof(*hdp) * nbr, GFP_NOFS,
++			   may_shrink);
 +	if (hdp) {
 +		dinfo->di_hdentry = hdp;
 +		err = 0;
@@ -9017,7 +9031,7 @@ index 0000000..25e71e9
 +}
 diff --git a/fs/aufs/dir.c b/fs/aufs/dir.c
 new file mode 100644
-index 0000000..455d069
+index 0000000..bd6c868
 --- /dev/null
 +++ b/fs/aufs/dir.c
 @@ -0,0 +1,762 @@
@@ -9495,7 +9509,7 @@ index 0000000..455d069
 +
 +/* ---------------------------------------------------------------------- */
 +
-+static int aufs_iterate(struct file *file, struct dir_context *ctx)
++static int aufs_iterate_shared(struct file *file, struct dir_context *ctx)
 +{
 +	int err;
 +	struct dentry *dentry;
@@ -9773,7 +9787,7 @@ index 0000000..455d069
 +	.owner		= THIS_MODULE,
 +	.llseek		= default_llseek,
 +	.read		= generic_read_dir,
-+	.iterate	= aufs_iterate,
++	.iterate_shared	= aufs_iterate_shared,
 +	.unlocked_ioctl	= aufs_ioctl_dir,
 +#ifdef CONFIG_COMPAT
 +	.compat_ioctl	= aufs_compat_ioctl_dir,
@@ -12436,10 +12450,10 @@ index 0000000..40289e4
 +}
 diff --git a/fs/aufs/file.c b/fs/aufs/file.c
 new file mode 100644
-index 0000000..eac86af
+index 0000000..232a97d
 --- /dev/null
 +++ b/fs/aufs/file.c
-@@ -0,0 +1,846 @@
+@@ -0,0 +1,851 @@
 +/*
 + * Copyright (C) 2005-2016 Junjiro R. Okajima
 + *
@@ -13110,23 +13124,26 @@ index 0000000..eac86af
 + */
 +static int refresh_file(struct file *file, int (*reopen)(struct file *file))
 +{
-+	int err, need_reopen;
++	int err, need_reopen, nbr;
 +	aufs_bindex_t bbot, bindex;
 +	struct dentry *dentry;
++	struct super_block *sb;
 +	struct au_finfo *finfo;
 +	struct au_hfile *hfile;
 +
 +	dentry = file->f_path.dentry;
++	sb = dentry->d_sb;
++	nbr = au_sbbot(sb) + 1;
 +	finfo = au_fi(file);
 +	if (!finfo->fi_hdir) {
 +		hfile = &finfo->fi_htop;
 +		AuDebugOn(!hfile->hf_file);
-+		bindex = au_br_index(dentry->d_sb, hfile->hf_br->br_id);
++		bindex = au_br_index(sb, hfile->hf_br->br_id);
 +		AuDebugOn(bindex < 0);
 +		if (bindex != finfo->fi_btop)
 +			au_set_fbtop(file, bindex);
 +	} else {
-+		err = au_fidir_realloc(finfo, au_sbbot(dentry->d_sb) + 1);
++		err = au_fidir_realloc(finfo, nbr, /*may_shrink*/0);
 +		if (unlikely(err))
 +			goto out;
 +		au_do_refresh_dir(file);
@@ -13136,6 +13153,9 @@ index 0000000..eac86af
 +	need_reopen = 1;
 +	if (!au_test_mmapped(file))
 +		err = au_file_refresh_by_inode(file, &need_reopen);
++	if (finfo->fi_hdir)
++		/* harmless if err */
++		au_fidir_realloc(finfo, nbr, /*may_shrink*/1);
 +	if (!err && need_reopen && !d_unlinked(dentry))
 +		err = reopen(file);
 +	if (!err) {
@@ -13215,8 +13235,7 @@ index 0000000..eac86af
 +}
 +
 +/* it will never be called, but necessary to support O_DIRECT */
-+static ssize_t aufs_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
-+			      loff_t offset)
++static ssize_t aufs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
 +{ BUG(); return 0; }
 +
 +/* they will never be called. */
@@ -13288,7 +13307,7 @@ index 0000000..eac86af
 +};
 diff --git a/fs/aufs/file.h b/fs/aufs/file.h
 new file mode 100644
-index 0000000..4698c98
+index 0000000..47cd520
 --- /dev/null
 +++ b/fs/aufs/file.h
 @@ -0,0 +1,294 @@
@@ -13417,7 +13436,7 @@ index 0000000..4698c98
 +
 +void au_update_figen(struct file *file);
 +struct au_fidir *au_fidir_alloc(struct super_block *sb);
-+int au_fidir_realloc(struct au_finfo *finfo, int nbr);
++int au_fidir_realloc(struct au_finfo *finfo, int nbr, int may_shrink);
 +
 +void au_fi_init_once(void *_fi);
 +void au_finfo_fin(struct file *file, int atonce);
@@ -13588,7 +13607,7 @@ index 0000000..4698c98
 +#endif /* __AUFS_FILE_H__ */
 diff --git a/fs/aufs/finfo.c b/fs/aufs/finfo.c
 new file mode 100644
-index 0000000..dfb905d
+index 0000000..4f6e92a
 --- /dev/null
 +++ b/fs/aufs/finfo.c
 @@ -0,0 +1,151 @@
@@ -13673,7 +13692,7 @@ index 0000000..dfb905d
 +	return fidir;
 +}
 +
-+int au_fidir_realloc(struct au_finfo *finfo, int nbr)
++int au_fidir_realloc(struct au_finfo *finfo, int nbr, int may_shrink)
 +{
 +	int err;
 +	struct au_fidir *fidir, *p;
@@ -13684,7 +13703,7 @@ index 0000000..dfb905d
 +
 +	err = -ENOMEM;
 +	p = au_kzrealloc(fidir, au_fidir_sz(fidir->fd_nent), au_fidir_sz(nbr),
-+			 GFP_NOFS);
++			 GFP_NOFS, may_shrink);
 +	if (p) {
 +		p->fd_nent = nbr;
 +		finfo->fi_hdir = p;
@@ -15235,10 +15254,10 @@ index 0000000..4444fe1
 +}
 diff --git a/fs/aufs/i_op.c b/fs/aufs/i_op.c
 new file mode 100644
-index 0000000..b9bbc42
+index 0000000..f931821
 --- /dev/null
 +++ b/fs/aufs/i_op.c
-@@ -0,0 +1,1412 @@
+@@ -0,0 +1,1448 @@
 +/*
 + * Copyright (C) 2005-2016 Junjiro R. Okajima
 + *
@@ -15820,17 +15839,17 @@ index 0000000..b9bbc42
 +	return err;
 +}
 +
-+void au_pin_hdir_set_owner(struct au_pin *p, struct task_struct *task)
++static void au_pin_hdir_set_owner(struct au_pin *p, struct task_struct *task)
 +{
-+#if defined(CONFIG_DEBUG_MUTEXES) || defined(CONFIG_SMP)
-+	p->hdir->hi_inode->i_mutex.owner = task;
++#if !defined(CONFIG_RWSEM_GENERIC_SPINLOCK) && defined(CONFIG_RWSEM_SPIN_ON_OWNER)
++	p->hdir->hi_inode->i_rwsem.owner = task;
 +#endif
 +}
 +
 +void au_pin_hdir_acquire_nest(struct au_pin *p)
 +{
 +	if (p->hdir) {
-+		mutex_acquire_nest(&p->hdir->hi_inode->i_mutex.dep_map,
++		rwsem_acquire_nest(&p->hdir->hi_inode->i_rwsem.dep_map,
 +				   p->lsc_hi, 0, NULL, _RET_IP_);
 +		au_pin_hdir_set_owner(p, current);
 +	}
@@ -15840,7 +15859,7 @@ index 0000000..b9bbc42
 +{
 +	if (p->hdir) {
 +		au_pin_hdir_set_owner(p, p->task);
-+		mutex_release(&p->hdir->hi_inode->i_mutex.dep_map, 1, _RET_IP_);
++		rwsem_release(&p->hdir->hi_inode->i_rwsem.dep_map, 1, _RET_IP_);
 +	}
 +}
 +
@@ -16269,15 +16288,15 @@ index 0000000..b9bbc42
 +	return err;
 +}
 +
-+ssize_t au_srxattr(struct dentry *dentry, struct au_srxattr *arg)
++ssize_t au_srxattr(struct dentry *dentry, struct inode *inode,
++		   struct au_srxattr *arg)
 +{
 +	int err;
 +	struct path h_path;
 +	struct super_block *sb;
 +	struct au_icpup_args *a;
-+	struct inode *inode, *h_inode;
++	struct inode *h_inode;
 +
-+	inode = d_inode(dentry);
 +	IMustLock(inode);
 +
 +	err = -ENOMEM;
@@ -16299,6 +16318,7 @@ index 0000000..b9bbc42
 +	inode_unlock(a->h_inode);
 +	switch (arg->type) {
 +	case AU_XATTR_SET:
++		AuDebugOn(d_is_negative(h_path.dentry));
 +		err = vfsub_setxattr(h_path.dentry,
 +				     arg->u.set.name, arg->u.set.value,
 +				     arg->u.set.size, arg->u.set.flags);
@@ -16546,20 +16566,55 @@ index 0000000..b9bbc42
 +
 +/* ---------------------------------------------------------------------- */
 +
++static int au_is_special(struct inode *inode)
++{
++	return (inode->i_mode & (S_IFBLK | S_IFCHR | S_IFIFO | S_IFSOCK));
++}
++
 +static int aufs_update_time(struct inode *inode, struct timespec *ts, int flags)
 +{
 +	int err;
++	aufs_bindex_t bindex;
 +	struct super_block *sb;
 +	struct inode *h_inode;
++	struct vfsmount *h_mnt;
 +
 +	sb = inode->i_sb;
++	WARN_ONCE((flags & S_ATIME) && !IS_NOATIME(inode),
++		  "unexpected s_flags 0x%lx", sb->s_flags);
++
 +	/* mmap_sem might be acquired already, cf. aufs_mmap() */
 +	lockdep_off();
 +	si_read_lock(sb, AuLock_FLUSH);
 +	ii_write_lock_child(inode);
 +	lockdep_on();
-+	h_inode = au_h_iptr(inode, au_ibtop(inode));
-+	err = vfsub_update_time(h_inode, ts, flags);
++
++	err = 0;
++	bindex = au_ibtop(inode);
++	h_inode = au_h_iptr(inode, bindex);
++	if (!au_test_ro(sb, bindex, inode)) {
++		h_mnt = au_sbr_mnt(sb, bindex);
++		err = vfsub_mnt_want_write(h_mnt);
++		if (!err) {
++			err = vfsub_update_time(h_inode, ts, flags);
++			vfsub_mnt_drop_write(h_mnt);
++		}
++	} else if (au_is_special(h_inode)) {
++		/*
++		 * Never copy-up here.
++		 * These special files may already be opened and used for
++		 * communicating. If we copied it up, then the communication
++		 * would be corrupted.
++		 */
++		AuWarn1("timestamps for i%lu are ignored "
++			"since it is on readonly branch (hi%lu).\n",
++			inode->i_ino, h_inode->i_ino);
++	} else if (flags & ~S_ATIME) {
++		err = -EIO;
++		AuIOErr1("unexpected flags 0x%x\n", flags);
++		AuDebugOn(1);
++	}
++
 +	lockdep_off();
 +	if (!err)
 +		au_cpup_attr_timesizes(inode);
@@ -19121,10 +19176,10 @@ index 0000000..200b4d5
 +}
 diff --git a/fs/aufs/iinfo.c b/fs/aufs/iinfo.c
 new file mode 100644
-index 0000000..db04b18
+index 0000000..17cc9e9
 --- /dev/null
 +++ b/fs/aufs/iinfo.c
-@@ -0,0 +1,284 @@
+@@ -0,0 +1,285 @@
 +/*
 + * Copyright (C) 2005-2016 Junjiro R. Okajima
 + *
@@ -19345,7 +19400,7 @@ index 0000000..db04b18
 +	return -ENOMEM;
 +}
 +
-+int au_hinode_realloc(struct au_iinfo *iinfo, int nbr)
++int au_hinode_realloc(struct au_iinfo *iinfo, int nbr, int may_shrink)
 +{
 +	int err, i;
 +	struct au_hinode *hip;
@@ -19353,7 +19408,8 @@ index 0000000..db04b18
 +	AuRwMustWriteLock(&iinfo->ii_rwsem);
 +
 +	err = -ENOMEM;
-+	hip = krealloc(iinfo->ii_hinode, sizeof(*hip) * nbr, GFP_NOFS);
++	hip = au_krealloc(iinfo->ii_hinode, sizeof(*hip) * nbr, GFP_NOFS,
++			  may_shrink);
 +	if (hip) {
 +		iinfo->ii_hinode = hip;
 +		i = iinfo->ii_bbot + 1;
@@ -19411,10 +19467,10 @@ index 0000000..db04b18
 +}
 diff --git a/fs/aufs/inode.c b/fs/aufs/inode.c
 new file mode 100644
-index 0000000..2234241
+index 0000000..16f0a37
 --- /dev/null
 +++ b/fs/aufs/inode.c
-@@ -0,0 +1,517 @@
+@@ -0,0 +1,519 @@
 +/*
 + * Copyright (C) 2005-2016 Junjiro R. Okajima
 + *
@@ -19457,7 +19513,7 @@ index 0000000..2234241
 +
 +static int au_ii_refresh(struct inode *inode, int *update)
 +{
-+	int err, e;
++	int err, e, nbr;
 +	umode_t type;
 +	aufs_bindex_t bindex, new_bindex;
 +	struct super_block *sb;
@@ -19469,9 +19525,10 @@ index 0000000..2234241
 +
 +	*update = 0;
 +	sb = inode->i_sb;
++	nbr = au_sbbot(sb) + 1;
 +	type = inode->i_mode & S_IFMT;
 +	iinfo = au_ii(inode);
-+	err = au_hinode_realloc(iinfo, au_sbbot(sb) + 1);
++	err = au_hinode_realloc(iinfo, nbr, /*may_shrink*/0);
 +	if (unlikely(err))
 +		goto out;
 +
@@ -19509,6 +19566,7 @@ index 0000000..2234241
 +		}
 +	}
 +	au_update_ibrange(inode, /*do_put_zero*/0);
++	au_hinode_realloc(iinfo, nbr, /*may_shrink*/1); /* harmless if err */
 +	e = au_dy_irefresh(inode);
 +	if (unlikely(e && !err))
 +		err = e;
@@ -19934,7 +19992,7 @@ index 0000000..2234241
 +}
 diff --git a/fs/aufs/inode.h b/fs/aufs/inode.h
 new file mode 100644
-index 0000000..a582a15
+index 0000000..2f8c1c6
 --- /dev/null
 +++ b/fs/aufs/inode.h
 @@ -0,0 +1,700 @@
@@ -20057,7 +20115,6 @@ index 0000000..a582a15
 +void au_pin_hdir_unlock(struct au_pin *p);
 +int au_pin_hdir_lock(struct au_pin *p);
 +int au_pin_hdir_relock(struct au_pin *p);
-+void au_pin_hdir_set_owner(struct au_pin *p, struct task_struct *task);
 +void au_pin_hdir_acquire_nest(struct au_pin *p);
 +void au_pin_hdir_release(struct au_pin *p);
 +
@@ -20212,7 +20269,7 @@ index 0000000..a582a15
 +void au_hinode_init(struct au_hinode *hinode);
 +int au_iinfo_init(struct inode *inode);
 +void au_iinfo_fin(struct inode *inode);
-+int au_hinode_realloc(struct au_iinfo *iinfo, int nbr);
++int au_hinode_realloc(struct au_iinfo *iinfo, int nbr, int may_shrink);
 +
 +#ifdef CONFIG_PROC_FS
 +/* plink.c */
@@ -20252,10 +20309,10 @@ index 0000000..a582a15
 +int au_cpup_xattr(struct dentry *h_dst, struct dentry *h_src, int ignore_flags,
 +		  unsigned int verbose);
 +ssize_t aufs_listxattr(struct dentry *dentry, char *list, size_t size);
-+ssize_t aufs_getxattr(struct dentry *dentry, const char *name, void *value,
-+		      size_t size);
-+int aufs_setxattr(struct dentry *dentry, const char *name, const void *value,
-+		  size_t size, int flags);
++ssize_t aufs_getxattr(struct dentry *dentry, struct inode *inode,
++		      const char *name, void *value, size_t size);
++int aufs_setxattr(struct dentry *dentry, struct inode *inode, const char *name,
++		  const void *value, size_t size, int flags);
 +int aufs_removexattr(struct dentry *dentry, const char *name);
 +
 +/* void au_xattr_init(struct super_block *sb); */
@@ -20295,7 +20352,8 @@ index 0000000..a582a15
 +		} acl_set;
 +	} u;
 +};
-+ssize_t au_srxattr(struct dentry *dentry, struct au_srxattr *arg);
++ssize_t au_srxattr(struct dentry *dentry, struct inode *inode,
++		   struct au_srxattr *arg);
 +#endif
 +
 +/* ---------------------------------------------------------------------- */
@@ -20865,10 +20923,10 @@ index 0000000..fc5529b
 +#endif
 diff --git a/fs/aufs/loop.c b/fs/aufs/loop.c
 new file mode 100644
-index 0000000..77df479
+index 0000000..eeb2a30
 --- /dev/null
 +++ b/fs/aufs/loop.c
-@@ -0,0 +1,146 @@
+@@ -0,0 +1,147 @@
 +/*
 + * Copyright (C) 2005-2016 Junjiro R. Okajima
 + *
@@ -20975,7 +21033,8 @@ index 0000000..77df479
 +	new_nelem = au_warn_loopback_nelem + au_warn_loopback_step;
 +	a = au_kzrealloc(au_warn_loopback_array,
 +			 au_warn_loopback_nelem * sizeof(unsigned long),
-+			 new_nelem * sizeof(unsigned long), GFP_ATOMIC);
++			 new_nelem * sizeof(unsigned long), GFP_ATOMIC,
++			 /*may_shrink*/0);
 +	if (a) {
 +		au_warn_loopback_nelem = new_nelem;
 +		au_warn_loopback_array = a;
@@ -21111,10 +21170,10 @@ index 0000000..4f83bdf
 +endif
 diff --git a/fs/aufs/module.c b/fs/aufs/module.c
 new file mode 100644
-index 0000000..16595de
+index 0000000..ba19f08
 --- /dev/null
 +++ b/fs/aufs/module.c
-@@ -0,0 +1,289 @@
+@@ -0,0 +1,333 @@
 +/*
 + * Copyright (C) 2005-2016 Junjiro R. Okajima
 + *
@@ -21140,13 +21199,57 @@ index 0000000..16595de
 +#include <linux/seq_file.h>
 +#include "aufs.h"
 +
-+void *au_kzrealloc(void *p, unsigned int nused, unsigned int new_sz, gfp_t gfp)
++/* shrinkable realloc */
++void *au_krealloc(void *p, unsigned int new_sz, gfp_t gfp, int may_shrink)
 +{
-+	if (new_sz <= nused)
-+		return p;
++	size_t sz;
++	int diff;
 +
-+	p = krealloc(p, new_sz, gfp);
-+	if (p)
++	sz = 0;
++	diff = -1;
++	if (p) {
++#if 0 /* unused */
++		if (!new_sz) {
++			au_delayed_kfree(p);
++			p = NULL;
++			goto out;
++		}
++#else
++		AuDebugOn(!new_sz);
++#endif
++		sz = ksize(p);
++		diff = au_kmidx_sub(sz, new_sz);
++	}
++	if (sz && !diff)
++		goto out;
++
++	if (sz < new_sz)
++		/* expand or SLOB */
++		p = krealloc(p, new_sz, gfp);
++	else if (new_sz < sz && may_shrink) {
++		/* shrink */
++		void *q;
++
++		q = kmalloc(new_sz, gfp);
++		if (q) {
++			if (p) {
++				memcpy(q, p, new_sz);
++				au_delayed_kfree(p);
++			}
++			p = q;
++		} else
++			p = NULL;
++	}
++
++out:
++	return p;
++}
++
++void *au_kzrealloc(void *p, unsigned int nused, unsigned int new_sz, gfp_t gfp,
++		   int may_shrink)
++{
++	p = au_krealloc(p, new_sz, gfp, may_shrink);
++	if (p && new_sz > nused)
 +		memset(p + nused, 0, new_sz - nused);
 +	return p;
 +}
@@ -21168,9 +21271,9 @@ index 0000000..16595de
 +		head = &au_dfree.cache[AuCache_##idx].llist;		\
 +		node = llist_del_all(head);				\
 +		for (; node; node = next) {				\
-+			struct au_##name *p =				\
-+				p = llist_entry(node, struct au_##name,	\
-+						lnode);			\
++			struct au_##name *p				\
++				= llist_entry(node, struct au_##name,	\
++					      lnode);			\
 +			next = llist_next(node);			\
 +			au_cache_free_##name(p);			\
 +		}							\
@@ -21406,10 +21509,10 @@ index 0000000..16595de
 +module_exit(aufs_exit);
 diff --git a/fs/aufs/module.h b/fs/aufs/module.h
 new file mode 100644
-index 0000000..c81b221
+index 0000000..cb3ae30
 --- /dev/null
 +++ b/fs/aufs/module.h
-@@ -0,0 +1,144 @@
+@@ -0,0 +1,156 @@
 +/*
 + * Copyright (C) 2005-2016 Junjiro R. Okajima
 + *
@@ -21450,7 +21553,19 @@ index 0000000..c81b221
 +
 +extern int au_dir_roflags;
 +
-+void *au_kzrealloc(void *p, unsigned int nused, unsigned int new_sz, gfp_t gfp);
++void *au_krealloc(void *p, unsigned int new_sz, gfp_t gfp, int may_shrink);
++void *au_kzrealloc(void *p, unsigned int nused, unsigned int new_sz, gfp_t gfp,
++		   int may_shrink);
++
++static inline int au_kmidx_sub(size_t sz, size_t new_sz)
++{
++#ifndef CONFIG_SLOB
++	return kmalloc_index(sz) - kmalloc_index(new_sz);
++#else
++	return -1; /* SLOB is untested */
++#endif
++}
++
 +int au_seq_path(struct seq_file *seq, struct path *path);
 +
 +#ifdef CONFIG_PROC_FS
@@ -24927,7 +25042,7 @@ index 0000000..720b2ed
 +}
 diff --git a/fs/aufs/posix_acl.c b/fs/aufs/posix_acl.c
 new file mode 100644
-index 0000000..c44f63c
+index 0000000..7981c43
 --- /dev/null
 +++ b/fs/aufs/posix_acl.c
 @@ -0,0 +1,98 @@
@@ -25004,7 +25119,8 @@ index 0000000..c44f63c
 +		},
 +	};
 +
-+	inode_lock(inode);
++	IMustLock(inode);
++
 +	if (inode->i_ino == AUFS_ROOT_INO)
 +		dentry = dget(inode->i_sb->s_root);
 +	else {
@@ -25019,14 +25135,13 @@ index 0000000..c44f63c
 +		}
 +	}
 +
-+	ssz = au_srxattr(dentry, &arg);
++	ssz = au_srxattr(dentry, inode, &arg);
 +	dput(dentry);
 +	err = ssz;
 +	if (ssz >= 0)
 +		err = 0;
 +
 +out:
-+	inode_unlock(inode);
 +	return err;
 +}
 diff --git a/fs/aufs/procfs.c b/fs/aufs/procfs.c
@@ -25206,10 +25321,10 @@ index 0000000..a334330
 +}
 diff --git a/fs/aufs/rdu.c b/fs/aufs/rdu.c
 new file mode 100644
-index 0000000..3774f4e
+index 0000000..238c568
 --- /dev/null
 +++ b/fs/aufs/rdu.c
-@@ -0,0 +1,389 @@
+@@ -0,0 +1,381 @@
 +/*
 + * Copyright (C) 2005-2016 Junjiro R. Okajima
 + *
@@ -25360,7 +25475,7 @@ index 0000000..3774f4e
 +	arg.end += rdu->sz;
 +
 +	err = -ENOTDIR;
-+	if (unlikely(!file->f_op->iterate))
++	if (unlikely(!file->f_op->iterate && !file->f_op->iterate_shared))
 +		goto out;
 +
 +	err = security_file_permission(file, MAY_READ);
@@ -25370,15 +25485,7 @@ index 0000000..3774f4e
 +
 +	dentry = file->f_path.dentry;
 +	inode = d_inode(dentry);
-+#if 1
-+	inode_lock(inode);
-+#else
-+	/* todo: create a new inline func inode_lock_killable() */
-+	err = mutex_lock_killable(&inode->i_mutex);
-+	AuTraceErr(err);
-+	if (unlikely(err))
-+		goto out;
-+#endif
++	inode_lock_shared(inode);
 +
 +	arg.sb = inode->i_sb;
 +	err = si_read_lock(arg.sb, AuLock_FLUSH | AuLock_NOPLM);
@@ -25435,7 +25542,7 @@ index 0000000..3774f4e
 +out_si:
 +	si_read_unlock(arg.sb);
 +out_mtx:
-+	inode_unlock(inode);
++	inode_unlock_shared(inode);
 +out:
 +	AuTraceErr(err);
 +	return err;
@@ -25805,10 +25912,10 @@ index 0000000..678fe6f
 +#endif /* __AUFS_RWSEM_H__ */
 diff --git a/fs/aufs/sbinfo.c b/fs/aufs/sbinfo.c
 new file mode 100644
-index 0000000..3859f7f
+index 0000000..0b7e93b
 --- /dev/null
 +++ b/fs/aufs/sbinfo.c
-@@ -0,0 +1,354 @@
+@@ -0,0 +1,355 @@
 +/*
 + * Copyright (C) 2005-2016 Junjiro R. Okajima
 + *
@@ -25942,7 +26049,7 @@ index 0000000..3859f7f
 +	return err;
 +}
 +
-+int au_sbr_realloc(struct au_sbinfo *sbinfo, int nbr)
++int au_sbr_realloc(struct au_sbinfo *sbinfo, int nbr, int may_shrink)
 +{
 +	int err, sz;
 +	struct au_branch **brp;
@@ -25953,7 +26060,8 @@ index 0000000..3859f7f
 +	sz = sizeof(*brp) * (sbinfo->si_bbot + 1);
 +	if (unlikely(!sz))
 +		sz = sizeof(*brp);
-+	brp = au_kzrealloc(sbinfo->si_branch, sz, sizeof(*brp) * nbr, GFP_NOFS);
++	brp = au_kzrealloc(sbinfo->si_branch, sz, sizeof(*brp) * nbr, GFP_NOFS,
++			   may_shrink);
 +	if (brp) {
 +		sbinfo->si_branch = brp;
 +		err = 0;
@@ -27328,7 +27436,7 @@ index 0000000..093fba6
 +};
 diff --git a/fs/aufs/super.h b/fs/aufs/super.h
 new file mode 100644
-index 0000000..4e6e5ab
+index 0000000..37ea182
 --- /dev/null
 +++ b/fs/aufs/super.h
 @@ -0,0 +1,638 @@
@@ -27613,7 +27721,7 @@ index 0000000..4e6e5ab
 +/* sbinfo.c */
 +void au_si_free(struct kobject *kobj);
 +int au_si_alloc(struct super_block *sb);
-+int au_sbr_realloc(struct au_sbinfo *sbinfo, int nbr);
++int au_sbr_realloc(struct au_sbinfo *sbinfo, int nbr, int may_shrink);
 +
 +unsigned int au_sigen_inc(struct super_block *sb);
 +aufs_bindex_t au_new_br_id(struct super_block *sb);
@@ -28734,10 +28842,10 @@ index 0000000..cbebb37
 +}
 diff --git a/fs/aufs/vdir.c b/fs/aufs/vdir.c
 new file mode 100644
-index 0000000..a9e633a
+index 0000000..1ca6760
 --- /dev/null
 +++ b/fs/aufs/vdir.c
-@@ -0,0 +1,898 @@
+@@ -0,0 +1,900 @@
 +/*
 + * Copyright (C) 2005-2016 Junjiro R. Okajima
 + *
@@ -29019,8 +29127,8 @@ index 0000000..a9e633a
 +	unsigned char **o;
 +
 +	err = -ENOMEM;
-+	o = krealloc(vdir->vd_deblk, sizeof(*o) * (vdir->vd_nblk + 1),
-+		     GFP_NOFS);
++	o = au_krealloc(vdir->vd_deblk, sizeof(*o) * (vdir->vd_nblk + 1),
++			GFP_NOFS, /*may_shrink*/0);
 +	if (unlikely(!o))
 +		goto out;
 +
@@ -29387,6 +29495,7 @@ index 0000000..a9e633a
 +	err = 0;
 +	inode = file_inode(file);
 +	IMustLock(inode);
++	IiMustWriteLock(inode);
 +	SiMustAnyLock(inode->i_sb);
 +
 +	allocated = NULL;
@@ -29442,8 +29551,8 @@ index 0000000..a9e633a
 +	if (tgt->vd_nblk < src->vd_nblk) {
 +		unsigned char **p;
 +
-+		p = krealloc(tgt->vd_deblk, sizeof(*p) * src->vd_nblk,
-+			     GFP_NOFS);
++		p = au_krealloc(tgt->vd_deblk, sizeof(*p) * src->vd_nblk,
++				GFP_NOFS, /*may_shrink*/0);
 +		if (unlikely(!p))
 +			goto out;
 +		tgt->vd_deblk = p;
@@ -29453,7 +29562,8 @@ index 0000000..a9e633a
 +		unsigned char *p;
 +
 +		tgt->vd_deblk_sz = deblk_sz;
-+		p = krealloc(tgt->vd_deblk[0], deblk_sz, GFP_NOFS);
++		p = au_krealloc(tgt->vd_deblk[0], deblk_sz, GFP_NOFS,
++				/*may_shrink*/1);
 +		if (unlikely(!p))
 +			goto out;
 +		tgt->vd_deblk[0] = p;
@@ -32997,10 +33107,10 @@ index 0000000..b18cdab
 +}
 diff --git a/fs/aufs/wkq.h b/fs/aufs/wkq.h
 new file mode 100644
-index 0000000..830123c
+index 0000000..9b87836
 --- /dev/null
 +++ b/fs/aufs/wkq.h
-@@ -0,0 +1,91 @@
+@@ -0,0 +1,93 @@
 +/*
 + * Copyright (C) 2005-2016 Junjiro R. Okajima
 + *
@@ -33027,6 +33137,8 @@ index 0000000..830123c
 +#define __AUFS_WKQ_H__
 +
 +#ifdef __KERNEL__
++
++#include <linux/percpu_counter.h>
 +
 +struct super_block;
 +
@@ -33094,10 +33206,10 @@ index 0000000..830123c
 +#endif /* __AUFS_WKQ_H__ */
 diff --git a/fs/aufs/xattr.c b/fs/aufs/xattr.c
 new file mode 100644
-index 0000000..13cb104
+index 0000000..e919044
 --- /dev/null
 +++ b/fs/aufs/xattr.c
-@@ -0,0 +1,346 @@
+@@ -0,0 +1,347 @@
 +/*
 + * Copyright (C) 2014-2016 Junjiro R. Okajima
 + *
@@ -33335,6 +33447,7 @@ index 0000000..13cb104
 +				    arg->u.list.list, arg->u.list.size);
 +		break;
 +	case AU_XATTR_GET:
++		AuDebugOn(d_is_negative(h_path.dentry));
 +		err = vfs_getxattr(h_path.dentry,
 +				   arg->u.get.name, arg->u.get.value,
 +				   arg->u.get.size);
@@ -33363,8 +33476,8 @@ index 0000000..13cb104
 +	return au_lgxattr(dentry, &arg);
 +}
 +
-+ssize_t aufs_getxattr(struct dentry *dentry, const char *name, void *value,
-+		      size_t size)
++ssize_t aufs_getxattr(struct dentry *dentry, struct inode *inode __maybe_unused,
++		      const char *name, void *value, size_t size)
 +{
 +	struct au_lgxattr arg = {
 +		.type = AU_XATTR_GET,
@@ -33378,8 +33491,8 @@ index 0000000..13cb104
 +	return au_lgxattr(dentry, &arg);
 +}
 +
-+int aufs_setxattr(struct dentry *dentry, const char *name, const void *value,
-+		  size_t size, int flags)
++int aufs_setxattr(struct dentry *dentry, struct inode *inode, const char *name,
++		  const void *value, size_t size, int flags)
 +{
 +	struct au_srxattr arg = {
 +		.type = AU_XATTR_SET,
@@ -33391,7 +33504,7 @@ index 0000000..13cb104
 +		},
 +	};
 +
-+	return au_srxattr(dentry, &arg);
++	return au_srxattr(dentry, inode, &arg);
 +}
 +
 +int aufs_removexattr(struct dentry *dentry, const char *name)
@@ -33403,7 +33516,7 @@ index 0000000..13cb104
 +		},
 +	};
 +
-+	return au_srxattr(dentry, &arg);
++	return au_srxattr(dentry, d_inode(dentry), &arg);
 +}
 +
 +/* ---------------------------------------------------------------------- */
@@ -34770,7 +34883,7 @@ index 0000000..7f62beb
 +}
 diff --git a/include/uapi/linux/aufs_type.h b/include/uapi/linux/aufs_type.h
 new file mode 100644
-index 0000000..f6a0fc6
+index 0000000..7cc83dd
 --- /dev/null
 +++ b/include/uapi/linux/aufs_type.h
 @@ -0,0 +1,419 @@
@@ -34815,7 +34928,7 @@ index 0000000..f6a0fc6
 +
 +#include <linux/limits.h>
 +
-+#define AUFS_VERSION	"4.6-20160808"
++#define AUFS_VERSION	"4.7-20160912"
 +
 +/* todo? move this to linux-2.6.19/include/magic.h */
 +#define AUFS_SUPER_MAGIC	('a' << 24 | 'u' << 16 | 'f' << 8 | 's')
@@ -35194,5 +35307,5 @@ index 0000000..f6a0fc6
 +
 +#endif /* __AUFS_TYPE_H__ */
 -- 
-2.8.1
+2.10.2
 
