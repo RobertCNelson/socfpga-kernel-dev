@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm 4.5.5 Kernel Configuration
+# Linux/arm 4.5.7 Kernel Configuration
 #
 CONFIG_ARM=y
 CONFIG_ARM_HAS_SG_CHAIN=y
@@ -2482,9 +2482,11 @@ CONFIG_NVMEM=y
 CONFIG_FPGA=y
 CONFIG_FPGA_REGION=y
 CONFIG_FPGA_MGR_SOCFPGA=y
+CONFIG_FPGA_MGR_SOCFPGA_A10=y
 # CONFIG_FPGA_MGR_ZYNQ_FPGA is not set
 CONFIG_FPGA_BRIDGE=y
 CONFIG_SOCFPGA_FPGA_BRIDGE=y
+CONFIG_ALTERA_FREEZE_BRIDGE=y
 
 #
 # Firmware Drivers
