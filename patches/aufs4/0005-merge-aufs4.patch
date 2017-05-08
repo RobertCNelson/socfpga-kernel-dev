@@ -1,6 +1,6 @@
-From 273499fe46fc65c36604cc3dcca2e5f6601e19cf Mon Sep 17 00:00:00 2001
+From 9ab582440db5c635a44ba91c90e307bb13526a5d Mon Sep 17 00:00:00 2001
 From: Robert Nelson <robertcnelson@gmail.com>
-Date: Mon, 8 May 2017 16:13:14 -0500
+Date: Mon, 8 May 2017 16:28:16 -0500
 Subject: [PATCH 5/5] merge: aufs4
 
 Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
@@ -26,7 +26,7 @@ Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
  fs/aufs/branch.c                                   | 1423 +++++++++++++++
  fs/aufs/branch.h                                   |  321 ++++
  fs/aufs/conf.mk                                    |   38 +
- fs/aufs/cpup.c                                     | 1410 +++++++++++++++
+ fs/aufs/cpup.c                                     | 1413 +++++++++++++++
  fs/aufs/cpup.h                                     |   94 +
  fs/aufs/dbgaufs.c                                  |  438 +++++
  fs/aufs/dbgaufs.h                                  |   48 +
@@ -42,7 +42,7 @@ Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
  fs/aufs/dynop.c                                    |  371 ++++
  fs/aufs/dynop.h                                    |   74 +
  fs/aufs/export.c                                   |  836 +++++++++
- fs/aufs/f_op.c                                     |  869 +++++++++
+ fs/aufs/f_op.c                                     |  819 +++++++++
  fs/aufs/fhsm.c                                     |  426 +++++
  fs/aufs/file.c                                     |  860 +++++++++
  fs/aufs/file.h                                     |  333 ++++
@@ -51,13 +51,13 @@ Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
  fs/aufs/hfsnotify.c                                |  287 +++
  fs/aufs/hfsplus.c                                  |   56 +
  fs/aufs/hnotify.c                                  |  723 ++++++++
- fs/aufs/i_op.c                                     | 1457 +++++++++++++++
- fs/aufs/i_op_add.c                                 |  924 ++++++++++
+ fs/aufs/i_op.c                                     | 1450 +++++++++++++++
+ fs/aufs/i_op_add.c                                 |  928 ++++++++++
  fs/aufs/i_op_del.c                                 |  511 ++++++
- fs/aufs/i_op_ren.c                                 | 1015 +++++++++++
+ fs/aufs/i_op_ren.c                                 | 1165 ++++++++++++
  fs/aufs/iinfo.c                                    |  285 +++
  fs/aufs/inode.c                                    |  527 ++++++
- fs/aufs/inode.h                                    |  701 ++++++++
+ fs/aufs/inode.h                                    |  692 ++++++++
  fs/aufs/ioctl.c                                    |  219 +++
  fs/aufs/loop.c                                     |  147 ++
  fs/aufs/loop.h                                     |   52 +
@@ -69,14 +69,14 @@ Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
  fs/aufs/opts.h                                     |  213 +++
  fs/aufs/plink.c                                    |  514 ++++++
  fs/aufs/poll.c                                     |   52 +
- fs/aufs/posix_acl.c                                |   98 +
+ fs/aufs/posix_acl.c                                |  102 ++
  fs/aufs/procfs.c                                   |  169 ++
  fs/aufs/rdu.c                                      |  381 ++++
  fs/aufs/rwsem.h                                    |  198 +++
  fs/aufs/sbinfo.c                                   |  304 ++++
  fs/aufs/spl.h                                      |  113 ++
  fs/aufs/super.c                                    | 1044 +++++++++++
- fs/aufs/super.h                                    |  616 +++++++
+ fs/aufs/super.h                                    |  617 +++++++
  fs/aufs/sysaufs.c                                  |  104 ++
  fs/aufs/sysaufs.h                                  |  101 ++
  fs/aufs/sysfs.c                                    |  376 ++++
@@ -85,14 +85,14 @@ Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
  fs/aufs/vfsub.c                                    |  899 ++++++++++
  fs/aufs/vfsub.h                                    |  348 ++++
  fs/aufs/wbr_policy.c                               |  830 +++++++++
- fs/aufs/whout.c                                    | 1060 +++++++++++
+ fs/aufs/whout.c                                    | 1061 +++++++++++
  fs/aufs/whout.h                                    |   85 +
  fs/aufs/wkq.c                                      |  213 +++
  fs/aufs/wkq.h                                      |   93 +
- fs/aufs/xattr.c                                    |  366 ++++
+ fs/aufs/xattr.c                                    |  357 ++++
  fs/aufs/xino.c                                     | 1415 +++++++++++++++
  include/uapi/linux/aufs_type.h                     |  419 +++++
- 87 files changed, 34991 insertions(+)
+ 87 files changed, 35079 insertions(+)
  create mode 100644 Documentation/ABI/testing/debugfs-aufs
  create mode 100644 Documentation/ABI/testing/sysfs-aufs
  create mode 100644 Documentation/filesystems/aufs/README
@@ -4062,10 +4062,10 @@ index 000000000000..0bbb2d3a5285
 +-include ${srctree}/${src}/conf_priv.mk
 diff --git a/fs/aufs/cpup.c b/fs/aufs/cpup.c
 new file mode 100644
-index 000000000000..b7e38bfa401f
+index 000000000000..7731f8b4a676
 --- /dev/null
 +++ b/fs/aufs/cpup.c
-@@ -0,0 +1,1410 @@
+@@ -0,0 +1,1413 @@
 +/*
 + * Copyright (C) 2005-2017 Junjiro R. Okajima
 + *
@@ -4806,7 +4806,8 @@ index 000000000000..b7e38bfa401f
 +	IMustLock(h_dir);
 +	AuDbg("%pd %pd\n", h_dentry, h_path->dentry);
 +	/* no delegation since it is just created */
-+	err = vfsub_rename(h_dir, h_dentry, h_dir, h_path, /*delegated*/NULL);
++	err = vfsub_rename(h_dir, h_dentry, h_dir, h_path, /*delegated*/NULL,
++			   /*flags*/0);
 +	dput(h_path->dentry);
 +
 +out:
@@ -4819,6 +4820,8 @@ index 000000000000..b7e38bfa401f
 + * @len is for truncating when it is -1 copyup the entire file.
 + * in link/rename cases, @dst_parent may be different from the real one.
 + * basic->bsrc can be larger than basic->bdst.
++ * aufs doesn't touch the credential so
++ * security_inode_copy_up{,_xattr}() are unnecrssary.
 + */
 +static int au_cpup_single(struct au_cp_generic *cpg, struct dentry *dst_parent)
 +{
@@ -11292,10 +11295,10 @@ index 000000000000..4c187d64fea5
 +}
 diff --git a/fs/aufs/f_op.c b/fs/aufs/f_op.c
 new file mode 100644
-index 000000000000..713c8154fe4f
+index 000000000000..674b18a0a830
 --- /dev/null
 +++ b/fs/aufs/f_op.c
-@@ -0,0 +1,869 @@
+@@ -0,0 +1,819 @@
 +/*
 + * Copyright (C) 2005-2017 Junjiro R. Okajima
 + *
@@ -12023,55 +12026,6 @@ index 000000000000..713c8154fe4f
 +	return err;
 +}
 +
-+/* no one supports this operation, currently */
-+#if 0
-+static int aufs_aio_fsync_nondir(struct kiocb *kio, int datasync)
-+{
-+	int err;
-+	struct au_write_pre wpre;
-+	struct inode *inode, *h_inode;
-+	struct file *file, *h_file;
-+
-+	err = 0; /* -EBADF; */ /* posix? */
-+	if (unlikely(!(file->f_mode & FMODE_WRITE)))
-+		goto out;
-+
-+	file = kio->ki_filp;
-+	inode = file_inode(file);
-+	au_mtx_and_read_lock(inode);
-+
-+	wpre.lsc = 0;
-+	h_file = au_write_pre(file, /*do_ready*/1, &wpre);
-+	err = PTR_ERR(h_file);
-+	if (IS_ERR(h_file))
-+		goto out_unlock;
-+
-+	err = -ENOSYS;
-+	h_file = au_hf_top(file);
-+	if (h_file->f_op->aio_fsync) {
-+		h_inode = file_inode(h_file);
-+		if (!is_sync_kiocb(kio)) {
-+			get_file(h_file);
-+			fput(file);
-+		}
-+		kio->ki_filp = h_file;
-+		err = h_file->f_op->aio_fsync(kio, datasync);
-+		inode_lock_nested(h_inode, AuLsc_I_CHILD);
-+		if (!err)
-+			vfsub_update_h_iattr(&h_file->f_path, /*did*/NULL);
-+		/*ignore*/
-+		inode_unlock(h_inode);
-+	}
-+	au_write_post(inode, h_file, &wpre, /*written*/0);
-+
-+out_unlock:
-+	si_read_unlock(inode->sb);
-+	inode_unlock(inode);
-+out:
-+	return err;
-+}
-+#endif
-+
 +static int aufs_fasync(int fd, struct file *file, int flag)
 +{
 +	int err;
@@ -12152,7 +12106,6 @@ index 000000000000..713c8154fe4f
 +	.flush		= aufs_flush_nondir,
 +	.release	= aufs_release_nondir,
 +	.fsync		= aufs_fsync_nondir,
-+	/* .aio_fsync	= aufs_aio_fsync_nondir, */
 +	.fasync		= aufs_fasync,
 +	/* .sendpage	= aufs_sendpage, */
 +	.setfl		= aufs_setfl,
@@ -15451,10 +15404,10 @@ index 000000000000..d901ea213373
 +}
 diff --git a/fs/aufs/i_op.c b/fs/aufs/i_op.c
 new file mode 100644
-index 000000000000..17fab4be9994
+index 000000000000..e5ce09ce0942
 --- /dev/null
 +++ b/fs/aufs/i_op.c
-@@ -0,0 +1,1457 @@
+@@ -0,0 +1,1450 @@
 +/*
 + * Copyright (C) 2005-2017 Junjiro R. Okajima
 + *
@@ -16345,6 +16298,10 @@ index 000000000000..17fab4be9994
 +	inode = d_inode(dentry);
 +	IMustLock(inode);
 +
++	err = setattr_prepare(dentry, ia);
++	if (unlikely(err))
++		goto out;
++
 +	err = -ENOMEM;
 +	a = kzalloc(sizeof(*a), GFP_NOFS);
 +	if (unlikely(!a))
@@ -16489,8 +16446,8 @@ index 000000000000..17fab4be9994
 +	return err;
 +}
 +
-+ssize_t au_srxattr(struct dentry *dentry, struct inode *inode,
-+		   struct au_srxattr *arg)
++ssize_t au_sxattr(struct dentry *dentry, struct inode *inode,
++		  struct au_sxattr *arg)
 +{
 +	int err;
 +	struct path h_path;
@@ -16524,13 +16481,11 @@ index 000000000000..17fab4be9994
 +				     arg->u.set.name, arg->u.set.value,
 +				     arg->u.set.size, arg->u.set.flags);
 +		break;
-+	case AU_XATTR_REMOVE:
-+		err = vfsub_removexattr(h_path.dentry, arg->u.remove.name);
-+		break;
 +	case AU_ACL_SET:
 +		err = -EOPNOTSUPP;
 +		h_inode = d_inode(h_path.dentry);
 +		if (h_inode->i_op->set_acl)
++			/* this will call posix_acl_update_mode */
 +			err = h_inode->i_op->set_acl(h_inode,
 +						     arg->u.acl_set.acl,
 +						     arg->u.acl_set.type);
@@ -16584,7 +16539,7 @@ index 000000000000..17fab4be9994
 +}
 +
 +/*
-+ * common routine for aufs_getattr() and aufs_getxattr().
++ * common routine for aufs_getattr() and au_getxattr().
 + * returns zero or negative (an error).
 + * @dentry will be read-locked in success.
 + */
@@ -16756,7 +16711,7 @@ index 000000000000..17fab4be9994
 +	err = 0;
 +	AuDbg("%pf\n", h_inode->i_op->get_link);
 +	AuDbgDentry(h_dentry);
-+	ret = h_inode->i_op->get_link(h_dentry, h_inode, done);
++	ret = vfs_get_link(h_dentry, done);
 +	dput(h_dentry);
 +	if (IS_ERR(ret))
 +		err = PTR_ERR(ret);
@@ -16850,10 +16805,7 @@ index 000000000000..17fab4be9994
 +		.getattr	= aufs_getattr,
 +
 +#ifdef CONFIG_AUFS_XATTR
-+		.setxattr	= aufs_setxattr,
-+		.getxattr	= aufs_getxattr,
 +		.listxattr	= aufs_listxattr,
-+		.removexattr	= aufs_removexattr,
 +#endif
 +
 +		.readlink	= generic_readlink,
@@ -16882,10 +16834,7 @@ index 000000000000..17fab4be9994
 +		.getattr	= aufs_getattr,
 +
 +#ifdef CONFIG_AUFS_XATTR
-+		.setxattr	= aufs_setxattr,
-+		.getxattr	= aufs_getxattr,
 +		.listxattr	= aufs_listxattr,
-+		.removexattr	= aufs_removexattr,
 +#endif
 +
 +		.update_time	= aufs_update_time,
@@ -16903,10 +16852,7 @@ index 000000000000..17fab4be9994
 +		.getattr	= aufs_getattr,
 +
 +#ifdef CONFIG_AUFS_XATTR
-+		.setxattr	= aufs_setxattr,
-+		.getxattr	= aufs_getxattr,
 +		.listxattr	= aufs_listxattr,
-+		.removexattr	= aufs_removexattr,
 +#endif
 +
 +		.update_time	= aufs_update_time
@@ -16914,10 +16860,10 @@ index 000000000000..17fab4be9994
 +};
 diff --git a/fs/aufs/i_op_add.c b/fs/aufs/i_op_add.c
 new file mode 100644
-index 000000000000..7a3443583a38
+index 000000000000..955e5b08ef16
 --- /dev/null
 +++ b/fs/aufs/i_op_add.c
-@@ -0,0 +1,924 @@
+@@ -0,0 +1,928 @@
 +/*
 + * Copyright (C) 2005-2017 Junjiro R. Okajima
 + *
@@ -17632,6 +17578,10 @@ index 000000000000..7a3443583a38
 +		goto out_parent;
 +	}
 +
++	/*
++	 * aufs doesn't touch the credential so
++	 * security_dentry_create_files_as() is unnecrssary.
++	 */
 +	if (au_opt_test(au_mntflags(sb), PLINK)) {
 +		if (a->bdst < a->bsrc
 +		    /* && h_src_dentry->d_sb != a->h_path.dentry->d_sb */)
@@ -18361,10 +18311,10 @@ index 000000000000..ae2c9115fd61
 +}
 diff --git a/fs/aufs/i_op_ren.c b/fs/aufs/i_op_ren.c
 new file mode 100644
-index 000000000000..31267c87d5b1
+index 000000000000..74f429fbe476
 --- /dev/null
 +++ b/fs/aufs/i_op_ren.c
-@@ -0,0 +1,1015 @@
+@@ -0,0 +1,1165 @@
 +/*
 + * Copyright (C) 2005-2017 Junjiro R. Okajima
 + *
@@ -18392,13 +18342,15 @@ index 000000000000..31267c87d5b1
 +enum { AuSRC, AuDST, AuSrcDst };
 +enum { AuPARENT, AuCHILD, AuParentChild };
 +
-+#define AuRen_ISDIR	1
-+#define AuRen_ISSAMEDIR	(1 << 1)
-+#define AuRen_WHSRC	(1 << 2)
-+#define AuRen_WHDST	(1 << 3)
-+#define AuRen_MNT_WRITE	(1 << 4)
-+#define AuRen_DT_DSTDIR	(1 << 5)
-+#define AuRen_DIROPQ	(1 << 6)
++#define AuRen_ISDIR_SRC		1
++#define AuRen_ISDIR_DST		(1 << 1)
++#define AuRen_ISSAMEDIR		(1 << 2)
++#define AuRen_WHSRC		(1 << 3)
++#define AuRen_WHDST		(1 << 4)
++#define AuRen_MNT_WRITE		(1 << 5)
++#define AuRen_DT_DSTDIR		(1 << 6)
++#define AuRen_DIROPQ_SRC	(1 << 7)
++#define AuRen_DIROPQ_DST	(1 << 8)
 +#define au_ftest_ren(flags, name)	((flags) & AuRen_##name)
 +#define au_fset_ren(flags, name) \
 +	do { (flags) |= AuRen_##name; } while (0)
@@ -18410,9 +18362,9 @@ index 000000000000..31267c87d5b1
 +		struct dentry *dentry, *h_dentry, *parent, *h_parent,
 +			*wh_dentry;
 +		struct inode *dir, *inode;
-+		struct au_hinode *hdir;
++		struct au_hinode *hdir, *hinode;
 +		struct au_dtime dt[AuParentChild];
-+		aufs_bindex_t btop;
++		aufs_bindex_t btop, bdiropq;
 +	} sd[AuSrcDst];
 +
 +#define src_dentry	sd[AuSRC].dentry
@@ -18423,9 +18375,11 @@ index 000000000000..31267c87d5b1
 +#define src_h_parent	sd[AuSRC].h_parent
 +#define src_wh_dentry	sd[AuSRC].wh_dentry
 +#define src_hdir	sd[AuSRC].hdir
++#define src_hinode	sd[AuSRC].hinode
 +#define src_h_dir	sd[AuSRC].hdir->hi_inode
 +#define src_dt		sd[AuSRC].dt
 +#define src_btop	sd[AuSRC].btop
++#define src_bdiropq	sd[AuSRC].bdiropq
 +
 +#define dst_dentry	sd[AuDST].dentry
 +#define dst_dir		sd[AuDST].dir
@@ -18435,18 +18389,23 @@ index 000000000000..31267c87d5b1
 +#define dst_h_parent	sd[AuDST].h_parent
 +#define dst_wh_dentry	sd[AuDST].wh_dentry
 +#define dst_hdir	sd[AuDST].hdir
++#define dst_hinode	sd[AuDST].hinode
 +#define dst_h_dir	sd[AuDST].hdir->hi_inode
 +#define dst_dt		sd[AuDST].dt
 +#define dst_btop	sd[AuDST].btop
++#define dst_bdiropq	sd[AuDST].bdiropq
 +
 +	struct dentry *h_trap;
 +	struct au_branch *br;
-+	struct au_hinode *src_hinode;
 +	struct path h_path;
 +	struct au_nhash whlist;
-+	aufs_bindex_t btgt, src_bwh, src_bdiropq;
++	aufs_bindex_t btgt, src_bwh;
 +
-+	unsigned int flags;
++	struct {
++		unsigned short auren_flags;
++		unsigned char flags;	/* syscall parameter */
++		unsigned char exchange;
++	} __packed;
 +
 +	struct au_whtmp_rmdir *thargs;
 +	struct dentry *h_dst;
@@ -18468,16 +18427,29 @@ index 000000000000..31267c87d5b1
 +	err = -EIO; \
 +} while (0)
 +
-+static void au_ren_rev_diropq(int err, struct au_ren_args *a)
++static void au_ren_do_rev_diropq(int err, struct au_ren_args *a, int idx)
 +{
 +	int rerr;
++	struct dentry *d;
++#define src_or_dst(member) a->sd[idx].member
 +
-+	au_hn_inode_lock_nested(a->src_hinode, AuLsc_I_CHILD);
-+	rerr = au_diropq_remove(a->src_dentry, a->btgt);
-+	au_hn_inode_unlock(a->src_hinode);
-+	au_set_dbdiropq(a->src_dentry, a->src_bdiropq);
++	d = src_or_dst(dentry); /* {src,dst}_dentry */
++	au_hn_inode_lock_nested(src_or_dst(hinode), AuLsc_I_CHILD);
++	rerr = au_diropq_remove(d, a->btgt);
++	au_hn_inode_unlock(src_or_dst(hinode));
++	au_set_dbdiropq(d, src_or_dst(bdiropq));
 +	if (rerr)
-+		RevertFailure("remove diropq %pd", a->src_dentry);
++		RevertFailure("remove diropq %pd", d);
++
++#undef src_or_dst_
++}
++
++static void au_ren_rev_diropq(int err, struct au_ren_args *a)
++{
++	if (au_ftest_ren(a->auren_flags, DIROPQ_SRC))
++		au_ren_do_rev_diropq(err, a, AuSRC);
++	if (au_ftest_ren(a->auren_flags, DIROPQ_DST))
++		au_ren_do_rev_diropq(err, a, AuDST);
 +}
 +
 +static void au_ren_rev_rename(int err, struct au_ren_args *a)
@@ -18496,7 +18468,7 @@ index 000000000000..31267c87d5b1
 +	delegated = NULL;
 +	rerr = vfsub_rename(a->dst_h_dir,
 +			    au_h_dptr(a->src_dentry, a->btgt),
-+			    a->src_h_dir, &a->h_path, &delegated);
++			    a->src_h_dir, &a->h_path, &delegated, a->flags);
 +	if (unlikely(rerr == -EWOULDBLOCK)) {
 +		pr_warn("cannot retry for NFSv4 delegation"
 +			" for an internal rename\n");
@@ -18529,7 +18501,7 @@ index 000000000000..31267c87d5b1
 +
 +	delegated = NULL;
 +	rerr = vfsub_rename(a->dst_h_dir, a->h_dst, a->dst_h_dir, &a->h_path,
-+			    &delegated);
++			    &delegated, a->flags);
 +	if (unlikely(rerr == -EWOULDBLOCK)) {
 +		pr_warn("cannot retry for NFSv4 delegation"
 +			" for an internal rename\n");
@@ -18571,13 +18543,11 @@ index 000000000000..31267c87d5b1
 +	d = a->src_dentry;
 +	if (au_dbtop(d) == a->btgt) {
 +		a->h_path.dentry = a->dst_h_dentry;
-+		if (au_ftest_ren(a->flags, DIROPQ)
-+		    && au_dbdiropq(d) == a->btgt)
-+			au_fclr_ren(a->flags, DIROPQ);
 +		AuDebugOn(au_dbtop(d) != a->btgt);
 +		delegated = NULL;
 +		err = vfsub_rename(a->src_h_dir, au_h_dptr(d, a->btgt),
-+				   a->dst_h_dir, &a->h_path, &delegated);
++				   a->dst_h_dir, &a->h_path, &delegated,
++				   a->flags);
 +		if (unlikely(err == -EWOULDBLOCK)) {
 +			pr_warn("cannot retry for NFSv4 delegation"
 +				" for an internal rename\n");
@@ -18621,22 +18591,73 @@ index 000000000000..31267c87d5b1
 +}
 +
 +/* make it 'opaque' dir. */
-+static int au_ren_diropq(struct au_ren_args *a)
++static int au_ren_do_diropq(struct au_ren_args *a, int idx)
 +{
 +	int err;
-+	struct dentry *diropq;
++	struct dentry *d, *diropq;
++#define src_or_dst(member) a->sd[idx].member
 +
 +	err = 0;
-+	a->src_bdiropq = au_dbdiropq(a->src_dentry);
-+	a->src_hinode = au_hi(a->src_inode, a->btgt);
-+	au_hn_inode_lock_nested(a->src_hinode, AuLsc_I_CHILD);
-+	diropq = au_diropq_create(a->src_dentry, a->btgt);
-+	au_hn_inode_unlock(a->src_hinode);
++	d = src_or_dst(dentry); /* {src,dst}_dentry */
++	src_or_dst(bdiropq) = au_dbdiropq(d);
++	src_or_dst(hinode) = au_hi(src_or_dst(inode), a->btgt);
++	au_hn_inode_lock_nested(src_or_dst(hinode), AuLsc_I_CHILD);
++	diropq = au_diropq_create(d, a->btgt);
++	au_hn_inode_unlock(src_or_dst(hinode));
 +	if (IS_ERR(diropq))
 +		err = PTR_ERR(diropq);
 +	else
 +		dput(diropq);
 +
++#undef src_or_dst_
++	return err;
++}
++
++static int au_ren_diropq(struct au_ren_args *a)
++{
++	int err;
++	unsigned char always;
++	struct dentry *d;
++
++	err = 0;
++	d = a->dst_dentry; /* already renamed on the branch */
++	always = !!au_opt_test(au_mntflags(d->d_sb), ALWAYS_DIROPQ);
++	if (au_ftest_ren(a->auren_flags, ISDIR_SRC)
++	    && a->btgt != au_dbdiropq(a->src_dentry)
++	    && (a->dst_wh_dentry
++		|| a->btgt <= au_dbdiropq(d)
++		/* hide the lower to keep xino */
++		/* the lowers may not be a dir, but we hide them anyway */
++		|| a->btgt < au_dbbot(d)
++		|| always)) {
++		AuDbg("here\n");
++		err = au_ren_do_diropq(a, AuSRC);
++		if (unlikely(err))
++			goto out;
++		au_fset_ren(a->auren_flags, DIROPQ_SRC);
++	}
++	if (!a->exchange)
++		goto out; /* success */
++
++	d = a->src_dentry; /* already renamed on the branch */
++	if (au_ftest_ren(a->auren_flags, ISDIR_DST)
++	    && a->btgt != au_dbdiropq(a->dst_dentry)
++	    && (a->btgt < au_dbdiropq(d)
++		|| a->btgt < au_dbbot(d)
++		|| always)) {
++		AuDbgDentry(a->src_dentry);
++		AuDbgDentry(a->dst_dentry);
++		err = au_ren_do_diropq(a, AuDST);
++		if (unlikely(err))
++			goto out_rev_src;
++		au_fset_ren(a->auren_flags, DIROPQ_DST);
++	}
++	goto out; /* success */
++
++out_rev_src:
++	AuDbg("err %d, reverting src\n", err);
++	au_ren_rev_diropq(err, a);
++out:
 +	return err;
 +}
 +
@@ -18645,103 +18666,104 @@ index 000000000000..31267c87d5b1
 +	int err;
 +	struct dentry *d, *h_d;
 +
-+	/* prepare workqueue args for asynchronous rmdir */
-+	h_d = a->dst_h_dentry;
-+	if (au_ftest_ren(a->flags, ISDIR) && d_is_positive(h_d)) {
-+		err = -ENOMEM;
-+		a->thargs = au_whtmp_rmdir_alloc(a->src_dentry->d_sb, GFP_NOFS);
-+		if (unlikely(!a->thargs))
-+			goto out;
-+		a->h_dst = dget(h_d);
-+	}
++	if (!a->exchange) {
++		/* prepare workqueue args for asynchronous rmdir */
++		h_d = a->dst_h_dentry;
++		if (au_ftest_ren(a->auren_flags, ISDIR_DST)
++		    && d_is_positive(h_d)) {
++			err = -ENOMEM;
++			a->thargs = au_whtmp_rmdir_alloc(a->src_dentry->d_sb,
++							 GFP_NOFS);
++			if (unlikely(!a->thargs))
++				goto out;
++			a->h_dst = dget(h_d);
++		}
 +
-+	/* create whiteout for src_dentry */
-+	if (au_ftest_ren(a->flags, WHSRC)) {
-+		a->src_bwh = au_dbwh(a->src_dentry);
-+		AuDebugOn(a->src_bwh >= 0);
-+		a->src_wh_dentry
-+			= au_wh_create(a->src_dentry, a->btgt, a->src_h_parent);
-+		err = PTR_ERR(a->src_wh_dentry);
-+		if (IS_ERR(a->src_wh_dentry))
-+			goto out_thargs;
-+	}
++		/* create whiteout for src_dentry */
++		if (au_ftest_ren(a->auren_flags, WHSRC)) {
++			a->src_bwh = au_dbwh(a->src_dentry);
++			AuDebugOn(a->src_bwh >= 0);
++			a->src_wh_dentry = au_wh_create(a->src_dentry, a->btgt,
++							a->src_h_parent);
++			err = PTR_ERR(a->src_wh_dentry);
++			if (IS_ERR(a->src_wh_dentry))
++				goto out_thargs;
++		}
 +
-+	/* lookup whiteout for dentry */
-+	if (au_ftest_ren(a->flags, WHDST)) {
-+		h_d = au_wh_lkup(a->dst_h_parent, &a->dst_dentry->d_name,
-+				 a->br);
-+		err = PTR_ERR(h_d);
-+		if (IS_ERR(h_d))
-+			goto out_whsrc;
-+		if (d_is_negative(h_d))
-+			dput(h_d);
-+		else
-+			a->dst_wh_dentry = h_d;
-+	}
++		/* lookup whiteout for dentry */
++		if (au_ftest_ren(a->auren_flags, WHDST)) {
++			h_d = au_wh_lkup(a->dst_h_parent,
++					 &a->dst_dentry->d_name, a->br);
++			err = PTR_ERR(h_d);
++			if (IS_ERR(h_d))
++				goto out_whsrc;
++			if (d_is_negative(h_d))
++				dput(h_d);
++			else
++				a->dst_wh_dentry = h_d;
++		}
 +
-+	/* rename dentry to tmpwh */
-+	if (a->thargs) {
-+		err = au_whtmp_ren(a->dst_h_dentry, a->br);
-+		if (unlikely(err))
-+			goto out_whdst;
++		/* rename dentry to tmpwh */
++		if (a->thargs) {
++			err = au_whtmp_ren(a->dst_h_dentry, a->br);
++			if (unlikely(err))
++				goto out_whdst;
 +
-+		d = a->dst_dentry;
-+		au_set_h_dptr(d, a->btgt, NULL);
-+		err = au_lkup_neg(d, a->btgt, /*wh*/0);
-+		if (unlikely(err))
-+			goto out_whtmp;
-+		a->dst_h_dentry = au_h_dptr(d, a->btgt);
++			d = a->dst_dentry;
++			au_set_h_dptr(d, a->btgt, NULL);
++			err = au_lkup_neg(d, a->btgt, /*wh*/0);
++			if (unlikely(err))
++				goto out_whtmp;
++			a->dst_h_dentry = au_h_dptr(d, a->btgt);
++		}
 +	}
 +
 +	BUG_ON(d_is_positive(a->dst_h_dentry) && a->src_btop != a->btgt);
 +
 +	/* rename by vfs_rename or cpup */
-+	d = a->dst_dentry;
-+	if (au_ftest_ren(a->flags, ISDIR)
-+	    && (a->dst_wh_dentry
-+		|| au_dbdiropq(d) == a->btgt
-+		/* hide the lower to keep xino */
-+		|| a->btgt < au_dbbot(d)
-+		|| au_opt_test(au_mntflags(d->d_sb), ALWAYS_DIROPQ)))
-+		au_fset_ren(a->flags, DIROPQ);
 +	err = au_ren_or_cpup(a);
 +	if (unlikely(err))
 +		/* leave the copied-up one */
 +		goto out_whtmp;
 +
 +	/* make dir opaque */
-+	if (au_ftest_ren(a->flags, DIROPQ)) {
-+		err = au_ren_diropq(a);
-+		if (unlikely(err))
-+			goto out_rename;
-+	}
++	err = au_ren_diropq(a);
++	if (unlikely(err))
++		goto out_rename;
 +
 +	/* update target timestamps */
++	if (a->exchange) {
++		AuDebugOn(au_dbtop(a->dst_dentry) != a->btgt);
++		a->h_path.dentry = au_h_dptr(a->dst_dentry, a->btgt);
++		vfsub_update_h_iattr(&a->h_path, /*did*/NULL); /*ignore*/
++		a->dst_inode->i_ctime = d_inode(a->h_path.dentry)->i_ctime;
++	}
 +	AuDebugOn(au_dbtop(a->src_dentry) != a->btgt);
 +	a->h_path.dentry = au_h_dptr(a->src_dentry, a->btgt);
 +	vfsub_update_h_iattr(&a->h_path, /*did*/NULL); /*ignore*/
 +	a->src_inode->i_ctime = d_inode(a->h_path.dentry)->i_ctime;
 +
-+	/* remove whiteout for dentry */
-+	if (a->dst_wh_dentry) {
-+		a->h_path.dentry = a->dst_wh_dentry;
-+		err = au_wh_unlink_dentry(a->dst_h_dir, &a->h_path,
-+					  a->dst_dentry);
-+		if (unlikely(err))
-+			goto out_diropq;
++	if (!a->exchange) {
++		/* remove whiteout for dentry */
++		if (a->dst_wh_dentry) {
++			a->h_path.dentry = a->dst_wh_dentry;
++			err = au_wh_unlink_dentry(a->dst_h_dir, &a->h_path,
++						  a->dst_dentry);
++			if (unlikely(err))
++				goto out_diropq;
++		}
++
++		/* remove whtmp */
++		if (a->thargs)
++			au_ren_del_whtmp(a); /* ignore this error */
++
++		au_fhsm_wrote(a->src_dentry->d_sb, a->btgt, /*force*/0);
 +	}
-+
-+	/* remove whtmp */
-+	if (a->thargs)
-+		au_ren_del_whtmp(a); /* ignore this error */
-+
-+	au_fhsm_wrote(a->src_dentry->d_sb, a->btgt, /*force*/0);
 +	err = 0;
 +	goto out_success;
 +
 +out_diropq:
-+	if (au_ftest_ren(a->flags, DIROPQ))
-+		au_ren_rev_diropq(err, a);
++	au_ren_rev_diropq(err, a);
 +out_rename:
 +	au_ren_rev_rename(err, a);
 +	dput(a->h_dst);
@@ -18834,7 +18856,7 @@ index 000000000000..31267c87d5b1
 +	SiMustAnyLock(d->d_sb);
 +
 +	err = 0;
-+	if (au_ftest_ren(a->flags, ISDIR) && a->dst_inode) {
++	if (au_ftest_ren(a->auren_flags, ISDIR_DST) && a->dst_inode) {
 +		rdhash = au_sbi(d->d_sb)->si_rdhash;
 +		if (!rdhash)
 +			rdhash = au_rdhash_est(au_dir_size(/*file*/NULL, d));
@@ -18842,9 +18864,12 @@ index 000000000000..31267c87d5b1
 +		if (unlikely(err))
 +			goto out;
 +
-+		au_set_dbtop(d, a->dst_btop);
-+		err = may_rename_dstdir(d, &a->whlist);
-+		au_set_dbtop(d, a->btgt);
++		if (!a->exchange) {
++			au_set_dbtop(d, a->dst_btop);
++			err = may_rename_dstdir(d, &a->whlist);
++			au_set_dbtop(d, a->btgt);
++		} else
++			err = may_rename_srcdir(d, a->btgt);
 +	}
 +	a->dst_h_dentry = au_h_dptr(d, au_dbtop(d));
 +	if (unlikely(err))
@@ -18852,7 +18877,7 @@ index 000000000000..31267c87d5b1
 +
 +	d = a->src_dentry;
 +	a->src_h_dentry = au_h_dptr(d, au_dbtop(d));
-+	if (au_ftest_ren(a->flags, ISDIR)) {
++	if (au_ftest_ren(a->auren_flags, ISDIR_SRC)) {
 +		err = may_rename_srcdir(d, a->btgt);
 +		if (unlikely(err)) {
 +			au_nhash_wh_free(&a->whlist);
@@ -18876,7 +18901,7 @@ index 000000000000..31267c87d5b1
 +
 +	if (a->src_btop == a->btgt) {
 +		err = au_may_del(a->src_dentry, a->btgt, a->src_h_parent,
-+				 au_ftest_ren(a->flags, ISDIR));
++				 au_ftest_ren(a->auren_flags, ISDIR_SRC));
 +		if (unlikely(err))
 +			goto out;
 +		err = -EINVAL;
@@ -18893,7 +18918,7 @@ index 000000000000..31267c87d5b1
 +		goto out;
 +
 +	err = -EIO;
-+	isdir = !!au_ftest_ren(a->flags, ISDIR);
++	isdir = !!au_ftest_ren(a->auren_flags, ISDIR_DST);
 +	if (d_really_is_negative(a->dst_dentry)) {
 +		if (d_is_negative(a->dst_h_dentry))
 +			err = au_may_add(a->dst_dentry, a->btgt,
@@ -18943,7 +18968,7 @@ index 000000000000..31267c87d5b1
 +{
 +	vfsub_unlock_rename(a->src_h_parent, a->src_hdir,
 +			    a->dst_h_parent, a->dst_hdir);
-+	if (au_ftest_ren(a->flags, MNT_WRITE))
++	if (au_ftest_ren(a->auren_flags, MNT_WRITE))
 +		vfsub_mnt_drop_write(au_br_mnt(a->br));
 +}
 +
@@ -18961,7 +18986,7 @@ index 000000000000..31267c87d5b1
 +	err = vfsub_mnt_want_write(au_br_mnt(a->br));
 +	if (unlikely(err))
 +		goto out;
-+	au_fset_ren(a->flags, MNT_WRITE);
++	au_fset_ren(a->auren_flags, MNT_WRITE);
 +	a->h_trap = vfsub_lock_rename(a->src_h_parent, a->src_hdir,
 +				      a->dst_h_parent, a->dst_hdir);
 +	udba = au_opt_udba(a->src_dentry->d_sb);
@@ -18994,20 +19019,30 @@ index 000000000000..31267c87d5b1
 +
 +	dir = a->dst_dir;
 +	dir->i_version++;
-+	if (au_ftest_ren(a->flags, ISDIR)) {
++	if (au_ftest_ren(a->auren_flags, ISDIR_SRC)) {
 +		/* is this updating defined in POSIX? */
 +		au_cpup_attr_timesizes(a->src_inode);
 +		au_cpup_attr_nlink(dir, /*force*/1);
 +	}
-+
 +	au_dir_ts(dir, a->btgt);
 +
-+	if (au_ftest_ren(a->flags, ISSAMEDIR))
++	if (a->exchange) {
++		dir = a->src_dir;
++		dir->i_version++;
++		if (au_ftest_ren(a->auren_flags, ISDIR_DST)) {
++			/* is this updating defined in POSIX? */
++			au_cpup_attr_timesizes(a->dst_inode);
++			au_cpup_attr_nlink(dir, /*force*/1);
++		}
++		au_dir_ts(dir, a->btgt);
++	}
++
++	if (au_ftest_ren(a->auren_flags, ISSAMEDIR))
 +		return;
 +
 +	dir = a->src_dir;
 +	dir->i_version++;
-+	if (au_ftest_ren(a->flags, ISDIR))
++	if (au_ftest_ren(a->auren_flags, ISDIR_SRC))
 +		au_cpup_attr_nlink(dir, /*force*/1);
 +	au_dir_ts(dir, a->btgt);
 +}
@@ -19027,13 +19062,16 @@ index 000000000000..31267c87d5b1
 +
 +	i = a->dst_inode;
 +	if (i) {
-+		if (!au_ftest_ren(a->flags, ISDIR))
-+			vfsub_drop_nlink(i);
-+		else {
-+			vfsub_dead_dir(i);
-+			au_cpup_attr_timesizes(i);
-+		}
-+		au_update_dbrange(d, /*do_put_zero*/1);
++		if (!a->exchange) {
++			if (!au_ftest_ren(a->auren_flags, ISDIR_DST))
++				vfsub_drop_nlink(i);
++			else {
++				vfsub_dead_dir(i);
++				au_cpup_attr_timesizes(i);
++			}
++			au_update_dbrange(d, /*do_put_zero*/1);
++		} else
++			au_cpup_attr_nlink(i, /*force*/1);
 +	} else {
 +		bbot = a->btgt;
 +		for (bindex = au_dbtop(d); bindex < bbot; bindex++)
@@ -19045,30 +19083,33 @@ index 000000000000..31267c87d5b1
 +	}
 +
 +	d = a->src_dentry;
-+	au_set_dbwh(d, -1);
-+	bbot = au_dbbot(d);
-+	for (bindex = a->btgt + 1; bindex <= bbot; bindex++) {
-+		h_d = au_h_dptr(d, bindex);
-+		if (h_d)
-+			au_set_h_dptr(d, bindex, NULL);
-+	}
-+	au_set_dbbot(d, a->btgt);
-+
-+	sb = d->d_sb;
-+	i = a->src_inode;
-+	if (au_opt_test(au_mntflags(sb), PLINK) && au_plink_test(i))
-+		return; /* success */
-+
-+	bbot = au_ibbot(i);
-+	for (bindex = a->btgt + 1; bindex <= bbot; bindex++) {
-+		h_i = au_h_iptr(i, bindex);
-+		if (h_i) {
-+			au_xino_write(sb, bindex, h_i->i_ino, /*ino*/0);
-+			/* ignore this error */
-+			au_set_h_iptr(i, bindex, NULL, 0);
++	if (!a->exchange) {
++		au_set_dbwh(d, -1);
++		bbot = au_dbbot(d);
++		for (bindex = a->btgt + 1; bindex <= bbot; bindex++) {
++			h_d = au_h_dptr(d, bindex);
++			if (h_d)
++				au_set_h_dptr(d, bindex, NULL);
 +		}
++		au_set_dbbot(d, a->btgt);
++
++		sb = d->d_sb;
++		i = a->src_inode;
++		if (au_opt_test(au_mntflags(sb), PLINK) && au_plink_test(i))
++			return; /* success */
++
++		bbot = au_ibbot(i);
++		for (bindex = a->btgt + 1; bindex <= bbot; bindex++) {
++			h_i = au_h_iptr(i, bindex);
++			if (h_i) {
++				au_xino_write(sb, bindex, h_i->i_ino, /*ino*/0);
++				/* ignore this error */
++				au_set_h_iptr(i, bindex, NULL, 0);
++			}
++		}
++		au_set_ibbot(i, a->btgt);
 +	}
-+	au_set_ibbot(i, a->btgt);
++		d_drop(a->src_dentry);
 +}
 +
 +/* ---------------------------------------------------------------------- */
@@ -19106,7 +19147,8 @@ index 000000000000..31267c87d5b1
 +
 +	a->src_btop = au_dbtop(a->src_dentry);
 +	a->dst_btop = au_dbtop(a->dst_dentry);
-+	if (au_ftest_ren(a->flags, ISDIR))
++	if (au_ftest_ren(a->auren_flags, ISDIR_SRC)
++	    || au_ftest_ren(a->auren_flags, ISDIR_DST))
 +		au_fset_wrdir(wr_dir_args.flags, ISDIR);
 +	wr_dir_args.force_btgt = a->src_btop;
 +	if (a->dst_inode && a->dst_btop < a->src_btop)
@@ -19114,6 +19156,8 @@ index 000000000000..31267c87d5b1
 +	wr_dir_args.force_btgt = au_wbr(a->dst_dentry, wr_dir_args.force_btgt);
 +	err = au_wr_dir(a->dst_dentry, a->src_dentry, &wr_dir_args);
 +	a->btgt = err;
++	if (a->exchange)
++		au_update_dbtop(a->dst_dentry);
 +
 +	return err;
 +}
@@ -19122,19 +19166,20 @@ index 000000000000..31267c87d5b1
 +{
 +	a->h_path.dentry = a->src_h_parent;
 +	au_dtime_store(a->src_dt + AuPARENT, a->src_parent, &a->h_path);
-+	if (!au_ftest_ren(a->flags, ISSAMEDIR)) {
++	if (!au_ftest_ren(a->auren_flags, ISSAMEDIR)) {
 +		a->h_path.dentry = a->dst_h_parent;
 +		au_dtime_store(a->dst_dt + AuPARENT, a->dst_parent, &a->h_path);
 +	}
 +
-+	au_fclr_ren(a->flags, DT_DSTDIR);
-+	if (!au_ftest_ren(a->flags, ISDIR))
++	au_fclr_ren(a->auren_flags, DT_DSTDIR);
++	if (!au_ftest_ren(a->auren_flags, ISDIR_SRC)
++	    && !a->exchange)
 +		return;
 +
 +	a->h_path.dentry = a->src_h_dentry;
 +	au_dtime_store(a->src_dt + AuCHILD, a->src_dentry, &a->h_path);
 +	if (d_is_positive(a->dst_h_dentry)) {
-+		au_fset_ren(a->flags, DT_DSTDIR);
++		au_fset_ren(a->auren_flags, DT_DSTDIR);
 +		a->h_path.dentry = a->dst_h_dentry;
 +		au_dtime_store(a->dst_dt + AuCHILD, a->dst_dentry, &a->h_path);
 +	}
@@ -19146,17 +19191,17 @@ index 000000000000..31267c87d5b1
 +	struct inode *h_inode;
 +
 +	au_dtime_revert(a->src_dt + AuPARENT);
-+	if (!au_ftest_ren(a->flags, ISSAMEDIR))
++	if (!au_ftest_ren(a->auren_flags, ISSAMEDIR))
 +		au_dtime_revert(a->dst_dt + AuPARENT);
 +
-+	if (au_ftest_ren(a->flags, ISDIR) && err != -EIO) {
++	if (au_ftest_ren(a->auren_flags, ISDIR_SRC) && err != -EIO) {
 +		h_d = a->src_dt[AuCHILD].dt_h_path.dentry;
 +		h_inode = d_inode(h_d);
 +		inode_lock_nested(h_inode, AuLsc_I_CHILD);
 +		au_dtime_revert(a->src_dt + AuCHILD);
 +		inode_unlock(h_inode);
 +
-+		if (au_ftest_ren(a->flags, DT_DSTDIR)) {
++		if (au_ftest_ren(a->auren_flags, DT_DSTDIR)) {
 +			h_d = a->dst_dt[AuCHILD].dt_h_path.dentry;
 +			h_inode = d_inode(h_d);
 +			inode_lock_nested(h_inode, AuLsc_I_CHILD);
@@ -19169,15 +19214,21 @@ index 000000000000..31267c87d5b1
 +/* ---------------------------------------------------------------------- */
 +
 +int aufs_rename(struct inode *_src_dir, struct dentry *_src_dentry,
-+		struct inode *_dst_dir, struct dentry *_dst_dentry)
++		struct inode *_dst_dir, struct dentry *_dst_dentry,
++		unsigned int _flags)
 +{
-+	int err, flags;
++	int err, lock_flags;
 +	/* reduce stack space */
 +	struct au_ren_args *a;
++	struct au_pin pin;
 +
-+	AuDbg("%pd, %pd\n", _src_dentry, _dst_dentry);
++	AuDbg("%pd, %pd, 0x%x\n", _src_dentry, _dst_dentry, _flags);
 +	IMustLock(_src_dir);
 +	IMustLock(_dst_dir);
++
++	err = -EINVAL;
++	if (unlikely(_flags & RENAME_WHITEOUT))
++		goto out;
 +
 +	err = -ENOMEM;
 +	BUILD_BUG_ON(sizeof(*a) > PAGE_SIZE);
@@ -19185,6 +19236,8 @@ index 000000000000..31267c87d5b1
 +	if (unlikely(!a))
 +		goto out;
 +
++	a->flags = _flags;
++	a->exchange = _flags & RENAME_EXCHANGE;
 +	a->src_dir = _src_dir;
 +	a->src_dentry = _src_dentry;
 +	a->src_inode = NULL;
@@ -19198,20 +19251,33 @@ index 000000000000..31267c87d5b1
 +		a->dst_inode = d_inode(a->dst_dentry);
 +	a->dst_parent = a->dst_dentry->d_parent; /* dir inode is locked */
 +	if (a->dst_inode) {
-+		IMustLock(a->dst_inode);
++		/*
++		 * if EXCHANGE && src is non-dir && dst is dir,
++		 * dst is not locked.
++		 */
++		/* IMustLock(a->dst_inode); */
 +		au_igrab(a->dst_inode);
 +	}
 +
 +	err = -ENOTDIR;
-+	flags = AuLock_FLUSH | AuLock_NOPLM | AuLock_GEN;
++	lock_flags = AuLock_FLUSH | AuLock_NOPLM | AuLock_GEN;
 +	if (d_is_dir(a->src_dentry)) {
-+		au_fset_ren(a->flags, ISDIR);
-+		if (unlikely(d_really_is_positive(a->dst_dentry)
++		au_fset_ren(a->auren_flags, ISDIR_SRC);
++		if (unlikely(!a->exchange
++			     && d_really_is_positive(a->dst_dentry)
 +			     && !d_is_dir(a->dst_dentry)))
 +			goto out_free;
-+		flags |= AuLock_DIRS;
++		lock_flags |= AuLock_DIRS;
 +	}
-+	err = aufs_read_and_write_lock2(a->dst_dentry, a->src_dentry, flags);
++	if (a->dst_inode && d_is_dir(a->dst_dentry)) {
++		au_fset_ren(a->auren_flags, ISDIR_DST);
++		if (unlikely(!a->exchange
++			     && d_really_is_positive(a->src_dentry)
++			     && !d_is_dir(a->src_dentry)))
++			goto out_free;
++		lock_flags |= AuLock_DIRS;
++	}
++	err = aufs_read_and_write_lock2(a->dst_dentry, a->src_dentry, lock_flags);
 +	if (unlikely(err))
 +		goto out_free;
 +
@@ -19221,14 +19287,14 @@ index 000000000000..31267c87d5b1
 +	err = -ENOENT;
 +	if (a->dst_inode) {
 +		/*
-+		 * If it is a dir, VFS unhash dst_dentry before this
++		 * If it is a dir, VFS unhash it before this
 +		 * function. It means we cannot rely upon d_unhashed().
 +		 */
 +		if (unlikely(!a->dst_inode->i_nlink))
 +			goto out_unlock;
-+		if (!S_ISDIR(a->dst_inode->i_mode)) {
++		if (!au_ftest_ren(a->auren_flags, ISDIR_DST)) {
 +			err = au_d_hashed_positive(a->dst_dentry);
-+			if (unlikely(err))
++			if (unlikely(err && !a->exchange))
 +				goto out_unlock;
 +		} else if (unlikely(IS_DEADDIR(a->dst_inode)))
 +			goto out_unlock;
@@ -19244,7 +19310,7 @@ index 000000000000..31267c87d5b1
 +	if (unlikely(d_inode(a->dst_parent) == d_inode(a->src_dentry)))
 +		goto out_unlock;
 +
-+	au_fset_ren(a->flags, ISSAMEDIR); /* temporary */
++	au_fset_ren(a->auren_flags, ISSAMEDIR); /* temporary */
 +	di_write_lock_parent(a->dst_parent);
 +
 +	/* which branch we process */
@@ -19261,39 +19327,43 @@ index 000000000000..31267c87d5b1
 +
 +	/* prepare the writable parent dir on the same branch */
 +	if (a->dst_btop == a->btgt) {
-+		au_fset_ren(a->flags, WHDST);
++		au_fset_ren(a->auren_flags, WHDST);
 +	} else {
 +		err = au_cpup_dirs(a->dst_dentry, a->btgt);
 +		if (unlikely(err))
 +			goto out_children;
 +	}
 +
-+	if (a->src_dir != a->dst_dir) {
-+		/*
-+		 * this temporary unlock is safe,
-+		 * because both dir->i_mutex are locked.
-+		 */
-+		di_write_unlock(a->dst_parent);
-+		di_write_lock_parent(a->src_parent);
-+		err = au_wr_dir_need_wh(a->src_dentry,
-+					au_ftest_ren(a->flags, ISDIR),
-+					&a->btgt);
-+		di_write_unlock(a->src_parent);
-+		di_write_lock2_parent(a->src_parent, a->dst_parent, /*isdir*/1);
-+		au_fclr_ren(a->flags, ISSAMEDIR);
-+	} else
-+		err = au_wr_dir_need_wh(a->src_dentry,
-+					au_ftest_ren(a->flags, ISDIR),
-+					&a->btgt);
++	err = 0;
++	if (!a->exchange) {
++		if (a->src_dir != a->dst_dir) {
++			/*
++			 * this temporary unlock is safe,
++			 * because both dir->i_mutex are locked.
++			 */
++			di_write_unlock(a->dst_parent);
++			di_write_lock_parent(a->src_parent);
++			err = au_wr_dir_need_wh(a->src_dentry,
++						au_ftest_ren(a->auren_flags,
++							     ISDIR_SRC),
++						&a->btgt);
++			di_write_unlock(a->src_parent);
++			di_write_lock2_parent(a->src_parent, a->dst_parent,
++					      /*isdir*/1);
++			au_fclr_ren(a->auren_flags, ISSAMEDIR);
++		} else
++			err = au_wr_dir_need_wh(a->src_dentry,
++						au_ftest_ren(a->auren_flags,
++							     ISDIR_SRC),
++						&a->btgt);
++	}
 +	if (unlikely(err < 0))
 +		goto out_children;
 +	if (err)
-+		au_fset_ren(a->flags, WHSRC);
++		au_fset_ren(a->auren_flags, WHSRC);
 +
 +	/* cpup src */
 +	if (a->src_btop != a->btgt) {
-+		struct au_pin pin;
-+
 +		err = au_pin(&pin, a->src_dentry, a->btgt,
 +			     au_opt_udba(a->src_dentry->d_sb),
 +			     AuPin_DI_LOCKED | AuPin_MNT_WRITE);
@@ -19314,7 +19384,32 @@ index 000000000000..31267c87d5b1
 +			goto out_children;
 +		a->src_btop = a->btgt;
 +		a->src_h_dentry = au_h_dptr(a->src_dentry, a->btgt);
-+		au_fset_ren(a->flags, WHSRC);
++		if (!a->exchange)
++			au_fset_ren(a->auren_flags, WHSRC);
++	}
++
++	/* cpup dst */
++	if (a->exchange && a->dst_inode
++	    && a->dst_btop != a->btgt) {
++		err = au_pin(&pin, a->dst_dentry, a->btgt,
++			     au_opt_udba(a->dst_dentry->d_sb),
++			     AuPin_DI_LOCKED | AuPin_MNT_WRITE);
++		if (!err) {
++			struct au_cp_generic cpg = {
++				.dentry	= a->dst_dentry,
++				.bdst	= a->btgt,
++				.bsrc	= a->dst_btop,
++				.len	= -1,
++				.pin	= &pin,
++				.flags	= AuCpup_DTIME | AuCpup_HOPEN
++			};
++			err = au_sio_cpup_simple(&cpg);
++			au_unpin(&pin);
++		}
++		if (unlikely(err))
++			goto out_children;
++		a->dst_btop = a->btgt;
++		a->dst_h_dentry = au_h_dptr(a->dst_dentry, a->btgt);
 +	}
 +
 +	/* lock them all */
@@ -19323,12 +19418,14 @@ index 000000000000..31267c87d5b1
 +		/* leave the copied-up one */
 +		goto out_children;
 +
-+	if (!au_opt_test(au_mntflags(a->dst_dir->i_sb), UDBA_NONE))
-+		err = au_may_ren(a);
-+	else if (unlikely(a->dst_dentry->d_name.len > AUFS_MAX_NAMELEN))
-+		err = -ENAMETOOLONG;
-+	if (unlikely(err))
-+		goto out_hdir;
++	if (!a->exchange) {
++		if (!au_opt_test(au_mntflags(a->dst_dir->i_sb), UDBA_NONE))
++			err = au_may_ren(a);
++		else if (unlikely(a->dst_dentry->d_name.len > AUFS_MAX_NAMELEN))
++			err = -ENAMETOOLONG;
++		if (unlikely(err))
++			goto out_hdir;
++	}
 +
 +	/* store timestamps to be revertible */
 +	au_ren_dt(a);
@@ -19358,14 +19455,17 @@ index 000000000000..31267c87d5b1
 +		au_set_dbtop(a->dst_dentry, a->dst_btop);
 +	}
 +out_parent:
-+	if (!err)
-+		d_move(a->src_dentry, a->dst_dentry);
-+	else {
++	if (!err) {
++		if (!a->exchange)
++			d_move(a->src_dentry, a->dst_dentry);
++		else
++			d_exchange(a->src_dentry, a->dst_dentry);
++	} else {
 +		au_update_dbtop(a->dst_dentry);
 +		if (!a->dst_inode)
 +			d_drop(a->dst_dentry);
 +	}
-+	if (au_ftest_ren(a->flags, ISSAMEDIR))
++	if (au_ftest_ren(a->auren_flags, ISSAMEDIR))
 +		di_write_unlock(a->dst_parent);
 +	else
 +		di_write_unlock2(a->src_parent, a->dst_parent);
@@ -20206,10 +20306,10 @@ index 000000000000..d361e25280dc
 +}
 diff --git a/fs/aufs/inode.h b/fs/aufs/inode.h
 new file mode 100644
-index 000000000000..84f66f4baac0
+index 000000000000..ac36c5b77559
 --- /dev/null
 +++ b/fs/aufs/inode.h
-@@ -0,0 +1,701 @@
+@@ -0,0 +1,692 @@
 +/*
 + * Copyright (C) 2005-2017 Junjiro R. Okajima
 + *
@@ -20451,7 +20551,8 @@ index 000000000000..84f66f4baac0
 +/* i_op_ren.c */
 +int au_wbr(struct dentry *dentry, aufs_bindex_t btgt);
 +int aufs_rename(struct inode *src_dir, struct dentry *src_dentry,
-+		struct inode *dir, struct dentry *dentry);
++		struct inode *dir, struct dentry *dentry,
++		unsigned int flags);
 +
 +/* iinfo.c */
 +struct inode *au_h_iptr(struct inode *inode, aufs_bindex_t bindex);
@@ -20524,17 +20625,11 @@ index 000000000000..84f66f4baac0
 +int au_cpup_xattr(struct dentry *h_dst, struct dentry *h_src, int ignore_flags,
 +		  unsigned int verbose);
 +ssize_t aufs_listxattr(struct dentry *dentry, char *list, size_t size);
-+ssize_t aufs_getxattr(struct dentry *dentry, struct inode *inode,
-+		      const char *name, void *value, size_t size);
-+int aufs_setxattr(struct dentry *dentry, struct inode *inode, const char *name,
-+		  const void *value, size_t size, int flags);
-+int aufs_removexattr(struct dentry *dentry, const char *name);
-+
-+/* void au_xattr_init(struct super_block *sb); */
++void au_xattr_init(struct super_block *sb);
 +#else
 +AuStubInt0(au_cpup_xattr, struct dentry *h_dst, struct dentry *h_src,
 +	   int ignore_flags, unsigned int verbose);
-+/* AuStubVoid(au_xattr_init, struct super_block *sb); */
++AuStubVoid(au_xattr_init, struct super_block *sb);
 +#endif
 +
 +#ifdef CONFIG_FS_POSIX_ACL
@@ -20545,11 +20640,10 @@ index 000000000000..84f66f4baac0
 +#if IS_ENABLED(CONFIG_AUFS_XATTR) || IS_ENABLED(CONFIG_FS_POSIX_ACL)
 +enum {
 +	AU_XATTR_SET,
-+	AU_XATTR_REMOVE,
 +	AU_ACL_SET
 +};
 +
-+struct au_srxattr {
++struct au_sxattr {
 +	int type;
 +	union {
 +		struct {
@@ -20559,16 +20653,13 @@ index 000000000000..84f66f4baac0
 +			int		flags;
 +		} set;
 +		struct {
-+			const char	*name;
-+		} remove;
-+		struct {
 +			struct posix_acl *acl;
 +			int		type;
 +		} acl_set;
 +	} u;
 +};
-+ssize_t au_srxattr(struct dentry *dentry, struct inode *inode,
-+		   struct au_srxattr *arg);
++ssize_t au_sxattr(struct dentry *dentry, struct inode *inode,
++		  struct au_sxattr *arg);
 +#endif
 +
 +/* ---------------------------------------------------------------------- */
@@ -25269,10 +25360,10 @@ index 000000000000..1aea1948fd39
 +}
 diff --git a/fs/aufs/posix_acl.c b/fs/aufs/posix_acl.c
 new file mode 100644
-index 000000000000..cc7713e73f43
+index 000000000000..816a47c7df84
 --- /dev/null
 +++ b/fs/aufs/posix_acl.c
-@@ -0,0 +1,98 @@
+@@ -0,0 +1,102 @@
 +/*
 + * Copyright (C) 2014-2017 Junjiro R. Okajima
 + *
@@ -25324,6 +25415,8 @@ index 000000000000..cc7713e73f43
 +
 +	/* always topmost only */
 +	acl = get_acl(h_inode, type);
++	if (!IS_ERR_OR_NULL(acl))
++		set_cached_acl(inode, type, acl);
 +
 +out:
 +	ii_read_unlock(inode);
@@ -25338,7 +25431,7 @@ index 000000000000..cc7713e73f43
 +	int err;
 +	ssize_t ssz;
 +	struct dentry *dentry;
-+	struct au_srxattr arg = {
++	struct au_sxattr arg = {
 +		.type = AU_ACL_SET,
 +		.u.acl_set = {
 +			.acl	= acl,
@@ -25362,11 +25455,13 @@ index 000000000000..cc7713e73f43
 +		}
 +	}
 +
-+	ssz = au_srxattr(dentry, inode, &arg);
++	ssz = au_sxattr(dentry, inode, &arg);
 +	dput(dentry);
 +	err = ssz;
-+	if (ssz >= 0)
++	if (ssz >= 0) {
 +		err = 0;
++		set_cached_acl(inode, type, acl);
++	}
 +
 +out:
 +	return err;
@@ -26568,7 +26663,7 @@ index 000000000000..2845873ef250
 +#endif /* __AUFS_SPL_H__ */
 diff --git a/fs/aufs/super.c b/fs/aufs/super.c
 new file mode 100644
-index 000000000000..c9009299712e
+index 000000000000..3f0a96964c26
 --- /dev/null
 +++ b/fs/aufs/super.c
 @@ -0,0 +1,1044 @@
@@ -27503,7 +27598,7 @@ index 000000000000..c9009299712e
 +	sb->s_maxbytes = 0;
 +	sb->s_stack_depth = 1;
 +	au_export_init(sb);
-+	/* au_xattr_init(sb); */
++	au_xattr_init(sb);
 +
 +	err = alloc_root(sb);
 +	if (unlikely(err)) {
@@ -27618,10 +27713,10 @@ index 000000000000..c9009299712e
 +};
 diff --git a/fs/aufs/super.h b/fs/aufs/super.h
 new file mode 100644
-index 000000000000..a78799a4a09b
+index 000000000000..dede05b266d0
 --- /dev/null
 +++ b/fs/aufs/super.h
-@@ -0,0 +1,616 @@
+@@ -0,0 +1,617 @@
 +/*
 + * Copyright (C) 2005-2017 Junjiro R. Okajima
 + *
@@ -27869,6 +27964,7 @@ index 000000000000..a78799a4a09b
 +#define AuLock_IW		(1 << 2)	/* write-lock inode */
 +#define AuLock_FLUSH		(1 << 3)	/* wait for 'nowait' tasks */
 +#define AuLock_DIRS		(1 << 4)	/* target is a pair of dirs */
++						/* except RENAME_EXCHANGE */
 +#define AuLock_NOPLM		(1 << 5)	/* return err in plm mode */
 +#define AuLock_NOPLMW		(1 << 6)	/* wait for plm mode ends */
 +#define AuLock_GEN		(1 << 7)	/* test digen/iigen */
@@ -29908,7 +30004,7 @@ index 000000000000..5a52f317926f
 +}
 diff --git a/fs/aufs/vfsub.c b/fs/aufs/vfsub.c
 new file mode 100644
-index 000000000000..7a06ceb27a89
+index 000000000000..3cf429c1cafe
 --- /dev/null
 +++ b/fs/aufs/vfsub.c
 @@ -0,0 +1,899 @@
@@ -30312,7 +30408,7 @@ index 000000000000..7a06ceb27a89
 +
 +int vfsub_rename(struct inode *src_dir, struct dentry *src_dentry,
 +		 struct inode *dir, struct path *path,
-+		 struct inode **delegated_inode)
++		 struct inode **delegated_inode, unsigned int flags)
 +{
 +	int err;
 +	struct path tmp = {
@@ -30333,7 +30429,7 @@ index 000000000000..7a06ceb27a89
 +
 +	lockdep_off();
 +	err = vfs_rename(src_dir, src_dentry, dir, path->dentry,
-+			 delegated_inode, /*flags*/0);
++			 delegated_inode, flags);
 +	lockdep_on();
 +	if (!err) {
 +		int did;
@@ -30813,7 +30909,7 @@ index 000000000000..7a06ceb27a89
 +}
 diff --git a/fs/aufs/vfsub.h b/fs/aufs/vfsub.h
 new file mode 100644
-index 000000000000..cdbba6deb7c6
+index 000000000000..aeb5891bb167
 --- /dev/null
 +++ b/fs/aufs/vfsub.h
 @@ -0,0 +1,348 @@
@@ -30984,7 +31080,7 @@ index 000000000000..cdbba6deb7c6
 +	       struct path *path, struct inode **delegated_inode);
 +int vfsub_rename(struct inode *src_hdir, struct dentry *src_dentry,
 +		 struct inode *hdir, struct path *path,
-+		 struct inode **delegated_inode);
++		 struct inode **delegated_inode, unsigned int flags);
 +int vfsub_mkdir(struct inode *dir, struct path *path, int mode);
 +int vfsub_rmdir(struct inode *dir, struct path *path);
 +
@@ -32003,10 +32099,10 @@ index 000000000000..bddf01531cb9
 +};
 diff --git a/fs/aufs/whout.c b/fs/aufs/whout.c
 new file mode 100644
-index 000000000000..bdfb57567714
+index 000000000000..4e060ea540f0
 --- /dev/null
 +++ b/fs/aufs/whout.c
-@@ -0,0 +1,1060 @@
+@@ -0,0 +1,1061 @@
 +/*
 + * Copyright (C) 2005-2017 Junjiro R. Okajima
 + *
@@ -32200,7 +32296,8 @@ index 000000000000..bdfb57567714
 +
 +	/* under the same dir, no need to lock_rename() */
 +	delegated = NULL;
-+	err = vfsub_rename(h_dir, h_dentry, h_dir, &h_path, &delegated);
++	err = vfsub_rename(h_dir, h_dentry, h_dir, &h_path, &delegated,
++			   /*flags*/0);
 +	AuTraceErr(err);
 +	if (unlikely(err == -EWOULDBLOCK)) {
 +		pr_warn("cannot retry for NFSv4 delegation"
@@ -33478,10 +33575,10 @@ index 000000000000..0f1f42da519a
 +#endif /* __AUFS_WKQ_H__ */
 diff --git a/fs/aufs/xattr.c b/fs/aufs/xattr.c
 new file mode 100644
-index 000000000000..aa1e5979e649
+index 000000000000..25961f2b3df8
 --- /dev/null
 +++ b/fs/aufs/xattr.c
-@@ -0,0 +1,366 @@
+@@ -0,0 +1,357 @@
 +/*
 + * Copyright (C) 2014-2017 Junjiro R. Okajima
 + *
@@ -33503,6 +33600,8 @@ index 000000000000..aa1e5979e649
 + * handling xattr functions
 + */
 +
++#include <linux/fs.h>
++#include <linux/posix_acl_xattr.h>
 +#include <linux/xattr.h>
 +#include "aufs.h"
 +
@@ -33767,8 +33866,9 @@ index 000000000000..aa1e5979e649
 +	return au_lgxattr(dentry, &arg);
 +}
 +
-+ssize_t aufs_getxattr(struct dentry *dentry, struct inode *inode __maybe_unused,
-+		      const char *name, void *value, size_t size)
++static ssize_t au_getxattr(struct dentry *dentry,
++			   struct inode *inode __maybe_unused,
++			   const char *name, void *value, size_t size)
 +{
 +	struct au_lgxattr arg = {
 +		.type = AU_XATTR_GET,
@@ -33782,10 +33882,11 @@ index 000000000000..aa1e5979e649
 +	return au_lgxattr(dentry, &arg);
 +}
 +
-+int aufs_setxattr(struct dentry *dentry, struct inode *inode, const char *name,
-+		  const void *value, size_t size, int flags)
++static int au_setxattr(struct dentry *dentry, struct inode *inode,
++		       const char *name, const void *value, size_t size,
++		       int flags)
 +{
-+	struct au_srxattr arg = {
++	struct au_sxattr arg = {
 +		.type = AU_XATTR_SET,
 +		.u.set = {
 +			.name	= name,
@@ -33795,59 +33896,46 @@ index 000000000000..aa1e5979e649
 +		},
 +	};
 +
-+	return au_srxattr(dentry, inode, &arg);
-+}
-+
-+int aufs_removexattr(struct dentry *dentry, const char *name)
-+{
-+	struct au_srxattr arg = {
-+		.type = AU_XATTR_REMOVE,
-+		.u.remove = {
-+			.name	= name
-+		},
-+	};
-+
-+	return au_srxattr(dentry, d_inode(dentry), &arg);
++	return au_sxattr(dentry, inode, &arg);
 +}
 +
 +/* ---------------------------------------------------------------------- */
 +
-+#if 0
-+static size_t au_xattr_list(struct dentry *dentry, char *list, size_t list_size,
-+			    const char *name, size_t name_len, int type)
++static int au_xattr_get(const struct xattr_handler *handler,
++			struct dentry *dentry, struct inode *inode,
++			const char *name, void *buffer, size_t size)
 +{
-+	return aufs_listxattr(dentry, list, list_size);
++	return au_getxattr(dentry, inode, name, buffer, size);
 +}
 +
-+static int au_xattr_get(struct dentry *dentry, const char *name, void *buffer,
-+			size_t size, int type)
++static int au_xattr_set(const struct xattr_handler *handler,
++			struct dentry *dentry, struct inode *inode,
++			const char *name, const void *value, size_t size,
++			int flags)
 +{
-+	return aufs_getxattr(dentry, name, buffer, size);
-+}
-+
-+static int au_xattr_set(struct dentry *dentry, const char *name,
-+			const void *value, size_t size, int flags, int type)
-+{
-+	return aufs_setxattr(dentry, name, value, size, flags);
++	return au_setxattr(dentry, inode, name, value, size, flags);
 +}
 +
 +static const struct xattr_handler au_xattr_handler = {
-+	/* no prefix, no flags */
-+	.list	= au_xattr_list,
++	.name	= "",
++	.prefix	= "",
 +	.get	= au_xattr_get,
 +	.set	= au_xattr_set
-+	/* why no remove? */
 +};
 +
 +static const struct xattr_handler *au_xattr_handlers[] = {
-+	&au_xattr_handler
++#ifdef CONFIG_FS_POSIX_ACL
++	&posix_acl_access_xattr_handler,
++	&posix_acl_default_xattr_handler,
++#endif
++	&au_xattr_handler, /* must be last */
++	NULL
 +};
 +
 +void au_xattr_init(struct super_block *sb)
 +{
-+	/* sb->s_xattr = au_xattr_handlers; */
++	sb->s_xattr = au_xattr_handlers;
 +}
-+#endif
 diff --git a/fs/aufs/xino.c b/fs/aufs/xino.c
 new file mode 100644
 index 000000000000..3675f3225b14
@@ -35271,7 +35359,7 @@ index 000000000000..3675f3225b14
 +}
 diff --git a/include/uapi/linux/aufs_type.h b/include/uapi/linux/aufs_type.h
 new file mode 100644
-index 000000000000..7def2da61a30
+index 000000000000..94a129cdd9bf
 --- /dev/null
 +++ b/include/uapi/linux/aufs_type.h
 @@ -0,0 +1,419 @@
@@ -35316,7 +35404,7 @@ index 000000000000..7def2da61a30
 +
 +#include <linux/limits.h>
 +
-+#define AUFS_VERSION	"4.8-20170410"
++#define AUFS_VERSION	"4.9-20170410"
 +
 +/* todo? move this to linux-2.6.19/include/magic.h */
 +#define AUFS_SUPER_MAGIC	('a' << 24 | 'u' << 16 | 'f' << 8 | 's')

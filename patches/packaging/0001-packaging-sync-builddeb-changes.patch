@@ -1,26 +1,17 @@
-From d776f212d7154a32dd9ea4d2b707b6fc429034bf Mon Sep 17 00:00:00 2001
+From c8b1ba73fea6eaabe5ef800d62fed9d4c6e848c7 Mon Sep 17 00:00:00 2001
 From: Robert Nelson <robertcnelson@gmail.com>
-Date: Mon, 8 May 2017 16:15:07 -0500
+Date: Mon, 8 May 2017 16:29:15 -0500
 Subject: [PATCH] packaging: sync builddeb changes
 
 Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
 ---
- scripts/package/builddeb | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ scripts/package/builddeb | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
 diff --git a/scripts/package/builddeb b/scripts/package/builddeb
-index 8ea9fd2b6573..ea62b3323789 100755
+index 3c575cd07888..ea62b3323789 100755
 --- a/scripts/package/builddeb
 +++ b/scripts/package/builddeb
-@@ -51,7 +51,7 @@ set_debarch() {
- 		debarch=hppa ;;
- 	mips*)
- 		debarch=mips$(grep -q CPU_LITTLE_ENDIAN=y $KCONFIG_CONFIG && echo el || true) ;;
--	arm64)
-+	aarch64|arm64)
- 		debarch=arm64 ;;
- 	arm*)
- 		if grep -q CONFIG_AEABI=y $KCONFIG_CONFIG; then
 @@ -151,9 +151,18 @@ else
  fi
  
