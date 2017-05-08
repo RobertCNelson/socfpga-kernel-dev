@@ -1,6 +1,6 @@
-From ec4718e4c16415c9eb02538418519119b8ff33dd Mon Sep 17 00:00:00 2001
+From 273499fe46fc65c36604cc3dcca2e5f6601e19cf Mon Sep 17 00:00:00 2001
 From: Robert Nelson <robertcnelson@gmail.com>
-Date: Mon, 8 May 2017 15:58:34 -0500
+Date: Mon, 8 May 2017 16:13:14 -0500
 Subject: [PATCH 5/5] merge: aufs4
 
 Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
@@ -26,7 +26,7 @@ Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
  fs/aufs/branch.c                                   | 1423 +++++++++++++++
  fs/aufs/branch.h                                   |  321 ++++
  fs/aufs/conf.mk                                    |   38 +
- fs/aufs/cpup.c                                     | 1400 +++++++++++++++
+ fs/aufs/cpup.c                                     | 1410 +++++++++++++++
  fs/aufs/cpup.h                                     |   94 +
  fs/aufs/dbgaufs.c                                  |  438 +++++
  fs/aufs/dbgaufs.h                                  |   48 +
@@ -39,19 +39,19 @@ Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
  fs/aufs/dinfo.c                                    |  553 ++++++
  fs/aufs/dir.c                                      |  762 ++++++++
  fs/aufs/dir.h                                      |  137 ++
- fs/aufs/dynop.c                                    |  369 ++++
+ fs/aufs/dynop.c                                    |  371 ++++
  fs/aufs/dynop.h                                    |   74 +
  fs/aufs/export.c                                   |  836 +++++++++
  fs/aufs/f_op.c                                     |  869 +++++++++
  fs/aufs/fhsm.c                                     |  426 +++++
- fs/aufs/file.c                                     |  854 +++++++++
+ fs/aufs/file.c                                     |  860 +++++++++
  fs/aufs/file.h                                     |  333 ++++
  fs/aufs/finfo.c                                    |  151 ++
  fs/aufs/fstype.h                                   |  400 +++++
  fs/aufs/hfsnotify.c                                |  287 +++
  fs/aufs/hfsplus.c                                  |   56 +
  fs/aufs/hnotify.c                                  |  723 ++++++++
- fs/aufs/i_op.c                                     | 1454 +++++++++++++++
+ fs/aufs/i_op.c                                     | 1457 +++++++++++++++
  fs/aufs/i_op_add.c                                 |  924 ++++++++++
  fs/aufs/i_op_del.c                                 |  511 ++++++
  fs/aufs/i_op_ren.c                                 | 1015 +++++++++++
@@ -92,7 +92,7 @@ Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
  fs/aufs/xattr.c                                    |  366 ++++
  fs/aufs/xino.c                                     | 1415 +++++++++++++++
  include/uapi/linux/aufs_type.h                     |  419 +++++
- 87 files changed, 34970 insertions(+)
+ 87 files changed, 34991 insertions(+)
  create mode 100644 Documentation/ABI/testing/debugfs-aufs
  create mode 100644 Documentation/ABI/testing/sysfs-aufs
  create mode 100644 Documentation/filesystems/aufs/README
@@ -4062,10 +4062,10 @@ index 000000000000..0bbb2d3a5285
 +-include ${srctree}/${src}/conf_priv.mk
 diff --git a/fs/aufs/cpup.c b/fs/aufs/cpup.c
 new file mode 100644
-index 000000000000..f92553bc820d
+index 000000000000..b7e38bfa401f
 --- /dev/null
 +++ b/fs/aufs/cpup.c
-@@ -0,0 +1,1400 @@
+@@ -0,0 +1,1410 @@
 +/*
 + * Copyright (C) 2005-2017 Junjiro R. Okajima
 + *
@@ -4479,17 +4479,22 @@ index 000000000000..f92553bc820d
 +
 +	/* try stopping to update while we copyup */
 +	h_src_inode = d_inode(file[SRC].dentry);
-+	IMustLock(h_src_inode);
 +	h_src_sb = h_src_inode->i_sb;
++	if (!au_test_nfs(h_src_sb))
++		IMustLock(h_src_inode);
 +
 +	if (h_src_sb != file_inode(file[DST].file)->i_sb
 +	    || !file[DST].file->f_op->clone_file_range)
 +		err = au_copy_file(file[DST].file, file[SRC].file, cpg->len);
 +	else {
-+		inode_unlock(h_src_inode);
-+		err = vfsub_clone_file_range(file[SRC].file, file[DST].file,
-+					     cpg->len);
-+		inode_lock(h_src_inode);
++		if (!au_test_nfs(h_src_sb)) {
++			inode_unlock(h_src_inode);
++			err = vfsub_clone_file_range(file[SRC].file,
++						     file[DST].file, cpg->len);
++			inode_lock(h_src_inode);
++		} else
++			err = vfsub_clone_file_range(file[SRC].file,
++						     file[DST].file, cpg->len);
 +		if (unlikely(err == -EOPNOTSUPP && au_test_nfs(h_src_sb)))
 +			/* the backend fs on NFS may not support cloning */
 +			err = au_copy_file(file[DST].file, file[SRC].file,
@@ -4554,8 +4559,13 @@ index 000000000000..f92553bc820d
 +			goto out;
 +		}
 +		h_src_attr->valid = 1;
-+		err = au_cp_regular(cpg);
-+		inode_unlock(h_src_inode);
++		if (!au_test_nfs(h_src_inode->i_sb)) {
++			err = au_cp_regular(cpg);
++			inode_unlock(h_src_inode);
++		} else {
++			inode_unlock(h_src_inode);
++			err = au_cp_regular(cpg);
++		}
 +		rerr = au_pin_hdir_relock(cpg->pin);
 +		if (!err && rerr)
 +			err = rerr;
@@ -9983,10 +9993,10 @@ index 000000000000..5ff6c17d6ac5
 +#endif /* __AUFS_DIR_H__ */
 diff --git a/fs/aufs/dynop.c b/fs/aufs/dynop.c
 new file mode 100644
-index 000000000000..0344ca6f3004
+index 000000000000..c47e1a1e8e46
 --- /dev/null
 +++ b/fs/aufs/dynop.c
-@@ -0,0 +1,369 @@
+@@ -0,0 +1,371 @@
 +/*
 + * Copyright (C) 2010-2017 Junjiro R. Okajima
 + *
@@ -10178,6 +10188,8 @@ index 000000000000..0344ca6f3004
 +	/* this one will be changed according to an aufs mount option */
 +	DySetAop(direct_IO);
 +	DySetAop(migratepage);
++	DySetAop(isolate_page);
++	DySetAop(putback_page);
 +	DySetAop(launder_page);
 +	DySetAop(is_partially_uptodate);
 +	DySetAop(is_dirty_writeback);
@@ -12587,10 +12599,10 @@ index 000000000000..ef6f99e985c8
 +}
 diff --git a/fs/aufs/file.c b/fs/aufs/file.c
 new file mode 100644
-index 000000000000..efe461e7160f
+index 000000000000..33946832c9c3
 --- /dev/null
 +++ b/fs/aufs/file.c
-@@ -0,0 +1,854 @@
+@@ -0,0 +1,860 @@
 +/*
 + * Copyright (C) 2005-2017 Junjiro R. Okajima
 + *
@@ -13403,6 +13415,10 @@ index 000000000000..efe461e7160f
 +			    struct page *page, enum migrate_mode mode)
 +{ AuUnsupport(); return 0; }
 +#endif
++static bool aufs_isolate_page(struct page *page, isolate_mode_t mode)
++{ AuUnsupport(); return true; }
++static void aufs_putback_page(struct page *page)
++{ AuUnsupport(); }
 +static int aufs_launder_page(struct page *page)
 +{ AuUnsupport(); return 0; }
 +static int aufs_is_partially_uptodate(struct page *page,
@@ -13437,6 +13453,8 @@ index 000000000000..efe461e7160f
 +	.releasepage		= aufs_releasepage,
 +	/* is fallback_migrate_page ok? */
 +	/* .migratepage		= aufs_migratepage, */
++	.isolate_page		= aufs_isolate_page,
++	.putback_page		= aufs_putback_page,
 +	.launder_page		= aufs_launder_page,
 +	.is_partially_uptodate	= aufs_is_partially_uptodate,
 +	.is_dirty_writeback	= aufs_is_dirty_writeback,
@@ -15433,10 +15451,10 @@ index 000000000000..d901ea213373
 +}
 diff --git a/fs/aufs/i_op.c b/fs/aufs/i_op.c
 new file mode 100644
-index 000000000000..bc572108c5e8
+index 000000000000..17fab4be9994
 --- /dev/null
 +++ b/fs/aufs/i_op.c
-@@ -0,0 +1,1454 @@
+@@ -0,0 +1,1457 @@
 +/*
 + * Copyright (C) 2005-2017 Junjiro R. Okajima
 + *
@@ -15470,12 +15488,15 @@ index 000000000000..bc572108c5e8
 +	int err;
 +	const unsigned char write_mask = !!(mask & (MAY_WRITE | MAY_APPEND));
 +
++	err = -EPERM;
++	if (write_mask && IS_IMMUTABLE(h_inode))
++		goto out;
++
 +	err = -EACCES;
-+	if ((write_mask && IS_IMMUTABLE(h_inode))
-+	    || ((mask & MAY_EXEC)
-+		&& S_ISREG(h_inode->i_mode)
-+		&& (path_noexec(h_path)
-+		    || !(h_inode->i_mode & S_IXUGO))))
++	if (((mask & MAY_EXEC)
++	     && S_ISREG(h_inode->i_mode)
++	     && (path_noexec(h_path)
++		 || !(h_inode->i_mode & S_IXUGO))))
 +		goto out;
 +
 +	/*
@@ -35250,7 +35271,7 @@ index 000000000000..3675f3225b14
 +}
 diff --git a/include/uapi/linux/aufs_type.h b/include/uapi/linux/aufs_type.h
 new file mode 100644
-index 000000000000..43fae930be04
+index 000000000000..7def2da61a30
 --- /dev/null
 +++ b/include/uapi/linux/aufs_type.h
 @@ -0,0 +1,419 @@
@@ -35295,7 +35316,7 @@ index 000000000000..43fae930be04
 +
 +#include <linux/limits.h>
 +
-+#define AUFS_VERSION	"4.7-20170410"
++#define AUFS_VERSION	"4.8-20170410"
 +
 +/* todo? move this to linux-2.6.19/include/magic.h */
 +#define AUFS_SUPER_MAGIC	('a' << 24 | 'u' << 16 | 'f' << 8 | 's')

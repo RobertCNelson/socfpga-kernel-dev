@@ -98,7 +98,7 @@ cherrypick () {
 }
 
 external_git () {
-	git_tag="socfpga-4.7"
+	git_tag="socfpga-4.8"
 	echo "pulling: ${git_tag}"
 	${git_bin} pull --no-edit ${git_patchset} ${git_tag}
 	${git_bin} describe
@@ -213,7 +213,7 @@ local_patch () {
 
 external_git
 aufs4
-#rt
+rt
 #local_patch
 
 pre_backports () {
