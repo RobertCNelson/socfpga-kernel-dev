@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm 4.4.60 Kernel Configuration
+# Linux/arm 4.4.105 Kernel Configuration
 #
 CONFIG_ARM=y
 CONFIG_ARM_HAS_SG_CHAIN=y
@@ -684,6 +684,7 @@ CONFIG_STP=y
 CONFIG_GARP=y
 # CONFIG_BRIDGE is not set
 CONFIG_HAVE_NET_DSA=y
+# CONFIG_NET_DSA is not set
 CONFIG_VLAN_8021Q=y
 CONFIG_VLAN_8021Q_GVRP=y
 # CONFIG_VLAN_8021Q_MVRP is not set

@@ -1,4 +1,4 @@
-From bdfd0c53619237647b98639b7eaaf19aeea114cb Mon Sep 17 00:00:00 2001
+From cfa9ae436bdd3d7222b17c9727870cbd801ae702 Mon Sep 17 00:00:00 2001
 From: Yanjiang Jin <yanjiang.jin@windriver.com>
 Date: Wed, 16 Sep 2015 01:04:55 -0400
 Subject: [PATCH 6/6] aufs: call mutex.owner only when DEBUG_MUTEXES or
@@ -38,10 +38,10 @@ Signed-off-by: Bruce Ashfield <bruce.ashfield@windriver.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/aufs/i_op.c b/fs/aufs/i_op.c
-index eb62950a740e..504da966ec2d 100644
+index e317098bd67e..1eb064054c1f 100644
 --- a/fs/aufs/i_op.c
 +++ b/fs/aufs/i_op.c
-@@ -581,7 +581,7 @@ out:
+@@ -589,7 +589,7 @@ out:
  
  void au_pin_hdir_set_owner(struct au_pin *p, struct task_struct *task)
  {
@@ -51,5 +51,5 @@ index eb62950a740e..504da966ec2d 100644
  #endif
  }
 -- 
-2.11.0
+2.15.1
 
