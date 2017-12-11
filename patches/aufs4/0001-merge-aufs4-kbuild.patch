@@ -1,6 +1,6 @@
-From 013f5c9872a59156102929003c0e482259bd061c Mon Sep 17 00:00:00 2001
+From f8148045ffe646321cb6e6a539e41d06f0c97617 Mon Sep 17 00:00:00 2001
 From: Robert Nelson <robertcnelson@gmail.com>
-Date: Mon, 8 May 2017 16:28:12 -0500
+Date: Mon, 11 Dec 2017 14:56:48 -0600
 Subject: [PATCH 1/5] merge: aufs4-kbuild
 
 Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
@@ -44,5 +44,5 @@ index cd2be1c8e9fb..78f3c682e4c1 100644
  header-y += auto_fs.h
  header-y += auxvec.h
 -- 
-2.11.0
+2.15.1
 

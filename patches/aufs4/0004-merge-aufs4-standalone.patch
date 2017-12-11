@@ -1,6 +1,6 @@
-From cd37edd6c6af7b2b7b4a68ab980ca71689c0bcca Mon Sep 17 00:00:00 2001
+From 0c1585ffb0209b0e3c90609b943a7c4b89562d69 Mon Sep 17 00:00:00 2001
 From: Robert Nelson <robertcnelson@gmail.com>
-Date: Mon, 8 May 2017 16:28:14 -0500
+Date: Mon, 11 Dec 2017 14:56:51 -0600
 Subject: [PATCH 4/5] merge: aufs4-standalone
 
 Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
@@ -10,7 +10,7 @@ Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
  fs/fcntl.c               |  1 +
  fs/file_table.c          |  4 ++++
  fs/inode.c               |  1 +
- fs/namespace.c           |  2 ++
+ fs/namespace.c           |  3 +++
  fs/notify/group.c        |  4 ++++
  fs/notify/mark.c         |  4 ++++
  fs/open.c                |  2 ++
@@ -22,13 +22,13 @@ Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
  security/commoncap.c     |  2 ++
  security/device_cgroup.c |  2 ++
  security/security.c      | 10 ++++++++++
- 17 files changed, 42 insertions(+)
+ 17 files changed, 43 insertions(+)
 
 diff --git a/fs/dcache.c b/fs/dcache.c
-index fc74297d2a3b..98de99a36b30 100644
+index cd53f9ba3eb6..d7c9d925d12d 100644
 --- a/fs/dcache.c
 +++ b/fs/dcache.c
-@@ -1272,6 +1272,7 @@ void d_walk(struct dentry *parent, void *data,
+@@ -1300,6 +1300,7 @@ void d_walk(struct dentry *parent, void *data,
  	seq = 1;
  	goto again;
  }
@@ -36,7 +36,7 @@ index fc74297d2a3b..98de99a36b30 100644
  
  /*
   * Search for at least 1 mount point in the dentry's subdirs.
-@@ -2858,6 +2859,7 @@ void d_exchange(struct dentry *dentry1, struct dentry *dentry2)
+@@ -2886,6 +2887,7 @@ void d_exchange(struct dentry *dentry1, struct dentry *dentry2)
  
  	write_sequnlock(&rename_lock);
  }
@@ -45,7 +45,7 @@ index fc74297d2a3b..98de99a36b30 100644
  /**
   * d_ancestor - search for an ancestor
 diff --git a/fs/exec.c b/fs/exec.c
-index 67e86571685a..70f15edfcc4a 100644
+index b8c43be24751..7ff1d36a33e1 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
 @@ -104,6 +104,7 @@ bool path_noexec(const struct path *path)
@@ -57,7 +57,7 @@ index 67e86571685a..70f15edfcc4a 100644
  #ifdef CONFIG_USELIB
  /*
 diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 6f422796be9f..04fd33cbf126 100644
+index c7da7b6e480f..98851f421d9a 100644
 --- a/fs/fcntl.c
 +++ b/fs/fcntl.c
 @@ -82,6 +82,7 @@ int setfl(int fd, struct file * filp, unsigned long arg)
@@ -105,10 +105,10 @@ index ad17e05ebf95..ae9f2676d44c 100644
  void __init files_init(void)
  { 
 diff --git a/fs/inode.c b/fs/inode.c
-index 9a9ba3a13e40..a3a18d8350c3 100644
+index 816ee9b08f1e..9b8856b752f7 100644
 --- a/fs/inode.c
 +++ b/fs/inode.c
-@@ -1651,6 +1651,7 @@ int update_time(struct inode *inode, struct timespec *time, int flags)
+@@ -1652,6 +1652,7 @@ int update_time(struct inode *inode, struct timespec *time, int flags)
  
  	return update_time(inode, time, flags);
  }
@@ -117,10 +117,10 @@ index 9a9ba3a13e40..a3a18d8350c3 100644
  /**
   *	touch_atime	-	update the access time
 diff --git a/fs/namespace.c b/fs/namespace.c
-index 5e35057f07ac..d845d22b48ed 100644
+index a774274e1fa2..3af5badd2f51 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -466,6 +466,7 @@ void __mnt_drop_write(struct vfsmount *mnt)
+@@ -467,6 +467,7 @@ void __mnt_drop_write(struct vfsmount *mnt)
  	mnt_dec_writers(real_mount(mnt));
  	preempt_enable();
  }
@@ -128,7 +128,15 @@ index 5e35057f07ac..d845d22b48ed 100644
  
  /**
   * mnt_drop_write - give up write access to a mount
-@@ -1856,6 +1857,7 @@ int iterate_mounts(int (*f)(struct vfsmount *, void *), void *arg,
+@@ -795,6 +796,7 @@ int is_current_mnt_ns(struct vfsmount *mnt)
+ {
+ 	return check_mnt(real_mount(mnt));
+ }
++EXPORT_SYMBOL_GPL(is_current_mnt_ns);
+ 
+ /*
+  * vfsmount lock must be held for write
+@@ -1863,6 +1865,7 @@ int iterate_mounts(int (*f)(struct vfsmount *, void *), void *arg,
  	}
  	return 0;
  }
@@ -209,7 +217,7 @@ index d3fea0bd89e2..5fc06ad239e4 100644
  /*
   * Destroy all marks in destroy_list, waits for SRCU period to finish before
 diff --git a/fs/open.c b/fs/open.c
-index d3ed8171e8e0..20d24941d67d 100644
+index a6c6244f4993..80d0ce8d3e3d 100644
 --- a/fs/open.c
 +++ b/fs/open.c
 @@ -64,6 +64,7 @@ int do_truncate(struct dentry *dentry, loff_t length, unsigned int time_attrs,
@@ -229,7 +237,7 @@ index d3ed8171e8e0..20d24941d67d 100644
  static int do_dentry_open(struct file *f,
  			  struct inode *inode,
 diff --git a/fs/read_write.c b/fs/read_write.c
-index 4052813a40f5..7dfd7323b2c3 100644
+index ae2e2cd2b881..cf88061d7580 100644
 --- a/fs/read_write.c
 +++ b/fs/read_write.c
 @@ -525,6 +525,7 @@ vfs_readf_t vfs_readf(struct file *file)
@@ -281,7 +289,7 @@ index 7a5fa3f786a7..c9b9d46ee888 100644
  /*
   * Write out and wait upon all dirty data associated with this
 diff --git a/fs/xattr.c b/fs/xattr.c
-index 2d13b4e62fae..41c2bcda893f 100644
+index 932b9061a3a2..a3599ef60a68 100644
 --- a/fs/xattr.c
 +++ b/fs/xattr.c
 @@ -296,6 +296,7 @@ vfs_getxattr_alloc(struct dentry *dentry, const char *name, char **xattr_value,
@@ -425,5 +433,5 @@ index f825304f04a7..8dd441d17298 100644
  int security_mmap_addr(unsigned long addr)
  {
 -- 
-2.11.0
+2.15.1
 
