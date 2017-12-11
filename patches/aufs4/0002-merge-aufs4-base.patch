@@ -1,28 +1,30 @@
-From a7dc297b2cf7ae6bda059b4059bbea6f0f6bcc11 Mon Sep 17 00:00:00 2001
+From aa41e40a1dd6b78b412b8d83160ff556e4f622e3 Mon Sep 17 00:00:00 2001
 From: Robert Nelson <robertcnelson@gmail.com>
-Date: Mon, 8 May 2017 16:28:13 -0500
+Date: Mon, 11 Dec 2017 15:13:11 -0600
 Subject: [PATCH 2/5] merge: aufs4-base
 
 Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
 ---
- MAINTAINERS            | 13 +++++++++++++
- drivers/block/loop.c   | 18 ++++++++++++++++++
- fs/dcache.c            |  2 +-
- fs/fcntl.c             |  4 +++-
- fs/inode.c             |  2 +-
- fs/read_write.c        | 22 ++++++++++++++++++++++
- fs/splice.c            | 10 +++++-----
- fs/sync.c              |  2 +-
- include/linux/file.h   |  1 +
- include/linux/fs.h     | 10 ++++++++++
- include/linux/splice.h |  6 ++++++
- 11 files changed, 81 insertions(+), 9 deletions(-)
+ MAINTAINERS                   | 13 +++++++++++++
+ drivers/block/loop.c          | 18 ++++++++++++++++++
+ fs/dcache.c                   |  2 +-
+ fs/fcntl.c                    |  4 +++-
+ fs/inode.c                    |  2 +-
+ fs/namespace.c                |  6 ++++++
+ fs/read_write.c               | 22 ++++++++++++++++++++++
+ fs/splice.c                   | 10 +++++-----
+ fs/sync.c                     |  2 +-
+ include/linux/file.h          |  1 +
+ include/linux/fs.h            | 10 ++++++++++
+ include/linux/mnt_namespace.h |  3 +++
+ include/linux/splice.h        |  6 ++++++
+ 13 files changed, 90 insertions(+), 9 deletions(-)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 63cefa62324c..d78b954cb203 100644
+index 527d13759ecc..b6ea8ae0accb 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -2293,6 +2293,19 @@ F:	include/linux/audit.h
+@@ -2308,6 +2308,19 @@ F:	include/linux/audit.h
  F:	include/uapi/linux/audit.h
  F:	kernel/audit*
  
@@ -43,7 +45,7 @@ index 63cefa62324c..d78b954cb203 100644
  M:	Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
  W:	http://miguelojeda.es/auxdisplay.htm
 diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 24d6cefceb32..bf20890a7ef5 100644
+index 7fd5a6ac2675..fa7cee0241ca 100644
 --- a/drivers/block/loop.c
 +++ b/drivers/block/loop.c
 @@ -701,6 +701,24 @@ static inline int is_loop_device(struct file *file)
@@ -72,7 +74,7 @@ index 24d6cefceb32..bf20890a7ef5 100644
  
  static ssize_t loop_attr_show(struct device *dev, char *page,
 diff --git a/fs/dcache.c b/fs/dcache.c
-index 4485a48f4091..fc74297d2a3b 100644
+index 95d71eda8142..8ca5f0930450 100644
 --- a/fs/dcache.c
 +++ b/fs/dcache.c
 @@ -1164,7 +1164,7 @@ enum d_walk_ret {
@@ -85,7 +87,7 @@ index 4485a48f4091..fc74297d2a3b 100644
  		   void (*finish)(void *))
  {
 diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 350a2c8cfd28..6f422796be9f 100644
+index e1c54f20325c..9f0700860fc2 100644
 --- a/fs/fcntl.c
 +++ b/fs/fcntl.c
 @@ -29,7 +29,7 @@
@@ -119,8 +121,25 @@ index 88110fd0b282..9a9ba3a13e40 100644
  {
  	int (*update_time)(struct inode *, struct timespec *, int);
  
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 8bfad42c1ccf..eb2106dbc41d 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -785,6 +785,12 @@ static inline int check_mnt(struct mount *mnt)
+ 	return mnt->mnt_ns == current->nsproxy->mnt_ns;
+ }
+ 
++/* for aufs, CONFIG_AUFS_BR_FUSE */
++int is_current_mnt_ns(struct vfsmount *mnt)
++{
++	return check_mnt(real_mount(mnt));
++}
++
+ /*
+  * vfsmount lock must be held for write
+  */
 diff --git a/fs/read_write.c b/fs/read_write.c
-index 190e0d362581..4052813a40f5 100644
+index 5816d4c4cab0..670b3656da87 100644
 --- a/fs/read_write.c
 +++ b/fs/read_write.c
 @@ -515,6 +515,28 @@ ssize_t __vfs_write(struct file *file, const char __user *p, size_t count,
@@ -153,10 +172,10 @@ index 190e0d362581..4052813a40f5 100644
  {
  	mm_segment_t old_fs;
 diff --git a/fs/splice.c b/fs/splice.c
-index 8dd79ecfd383..8bca247c1db2 100644
+index 4ef78aa8ef61..178acc03c6cf 100644
 --- a/fs/splice.c
 +++ b/fs/splice.c
-@@ -856,8 +856,8 @@ EXPORT_SYMBOL(generic_splice_sendpage);
+@@ -857,8 +857,8 @@ EXPORT_SYMBOL(generic_splice_sendpage);
  /*
   * Attempt to initiate a splice from pipe to file.
   */
@@ -167,7 +186,7 @@ index 8dd79ecfd383..8bca247c1db2 100644
  {
  	ssize_t (*splice_write)(struct pipe_inode_info *, struct file *,
  				loff_t *, size_t, unsigned int);
-@@ -873,9 +873,9 @@ static long do_splice_from(struct pipe_inode_info *pipe, struct file *out,
+@@ -874,9 +874,9 @@ static long do_splice_from(struct pipe_inode_info *pipe, struct file *out,
  /*
   * Attempt to initiate a splice from a file to a pipe.
   */
@@ -194,22 +213,22 @@ index 2a54c1f22035..7a5fa3f786a7 100644
  	if (wait)
  		sync_inodes_sb(sb);
 diff --git a/include/linux/file.h b/include/linux/file.h
-index 7444f5feda12..bdac0be2ac54 100644
+index 61eb82cbafba..e700888b4da4 100644
 --- a/include/linux/file.h
 +++ b/include/linux/file.h
 @@ -19,6 +19,7 @@ struct dentry;
  struct path;
- extern struct file *alloc_file(struct path *, fmode_t mode,
+ extern struct file *alloc_file(const struct path *, fmode_t mode,
  	const struct file_operations *fop);
 +extern struct file *get_empty_filp(void);
  
  static inline void fput_light(struct file *file, int fput_needed)
  {
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index dc0478c07b2a..a02be40d7bfd 100644
+index 2ba074328894..d1c583b376a4 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -1291,6 +1291,7 @@ extern void fasync_free(struct fasync_struct *);
+@@ -1240,6 +1240,7 @@ extern void fasync_free(struct fasync_struct *);
  /* can be called from interrupts */
  extern void kill_fasync(struct fasync_struct **, int, int);
  
@@ -217,7 +236,7 @@ index dc0478c07b2a..a02be40d7bfd 100644
  extern void __f_setown(struct file *filp, struct pid *, enum pid_type, int force);
  extern void f_setown(struct file *filp, unsigned long arg, int force);
  extern void f_delown(struct file *filp);
-@@ -1715,6 +1716,7 @@ struct file_operations {
+@@ -1664,6 +1665,7 @@ struct file_operations {
  	ssize_t (*sendpage) (struct file *, struct page *, int, size_t, loff_t *, int);
  	unsigned long (*get_unmapped_area)(struct file *, unsigned long, unsigned long, unsigned long, unsigned long);
  	int (*check_flags)(int);
@@ -225,7 +244,7 @@ index dc0478c07b2a..a02be40d7bfd 100644
  	int (*flock) (struct file *, int, struct file_lock *);
  	ssize_t (*splice_write)(struct pipe_inode_info *, struct file *, loff_t *, size_t, unsigned int);
  	ssize_t (*splice_read)(struct file *, loff_t *, struct pipe_inode_info *, size_t, unsigned int);
-@@ -1768,6 +1770,12 @@ ssize_t rw_copy_check_uvector(int type, const struct iovec __user * uvector,
+@@ -1717,6 +1719,12 @@ ssize_t rw_copy_check_uvector(int type, const struct iovec __user * uvector,
  			      struct iovec *fast_pointer,
  			      struct iovec **ret_pointer);
  
@@ -238,7 +257,7 @@ index dc0478c07b2a..a02be40d7bfd 100644
  extern ssize_t __vfs_read(struct file *, char __user *, size_t, loff_t *);
  extern ssize_t __vfs_write(struct file *, const char __user *, size_t, loff_t *);
  extern ssize_t vfs_read(struct file *, char __user *, size_t, loff_t *);
-@@ -2140,6 +2148,7 @@ extern int current_umask(void);
+@@ -2108,6 +2116,7 @@ extern int current_umask(void);
  extern void ihold(struct inode * inode);
  extern void iput(struct inode *);
  extern int generic_update_time(struct inode *, struct timespec *, int);
@@ -246,7 +265,7 @@ index dc0478c07b2a..a02be40d7bfd 100644
  
  /* /sys/fs */
  extern struct kobject *fs_kobj;
-@@ -2419,6 +2428,7 @@ static inline bool sb_is_blkdev_sb(struct super_block *sb)
+@@ -2387,6 +2396,7 @@ static inline bool sb_is_blkdev_sb(struct super_block *sb)
  	return false;
  }
  #endif
@@ -254,6 +273,25 @@ index dc0478c07b2a..a02be40d7bfd 100644
  extern int sync_filesystem(struct super_block *);
  extern const struct file_operations def_blk_fops;
  extern const struct file_operations def_chr_fops;
+diff --git a/include/linux/mnt_namespace.h b/include/linux/mnt_namespace.h
+index 12b2ab510323..8b810d1ffcd5 100644
+--- a/include/linux/mnt_namespace.h
++++ b/include/linux/mnt_namespace.h
+@@ -5,11 +5,14 @@
+ struct mnt_namespace;
+ struct fs_struct;
+ struct user_namespace;
++struct vfsmount;
+ 
+ extern struct mnt_namespace *copy_mnt_ns(unsigned long, struct mnt_namespace *,
+ 		struct user_namespace *, struct fs_struct *);
+ extern void put_mnt_ns(struct mnt_namespace *ns);
+ 
++extern int is_current_mnt_ns(struct vfsmount *mnt);
++
+ extern const struct file_operations proc_mounts_operations;
+ extern const struct file_operations proc_mountinfo_operations;
+ extern const struct file_operations proc_mountstats_operations;
 diff --git a/include/linux/splice.h b/include/linux/splice.h
 index 00a21166e268..1f0a4a2b3f2f 100644
 --- a/include/linux/splice.h
@@ -270,5 +308,5 @@ index 00a21166e268..1f0a4a2b3f2f 100644
 +			 unsigned int flags);
  #endif
 -- 
-2.11.0
+2.15.1
 
