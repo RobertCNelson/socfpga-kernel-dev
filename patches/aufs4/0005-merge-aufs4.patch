@@ -1,6 +1,6 @@
-From 3df11b6c2e0b99116690a2a5d47a6ee81f1cab69 Mon Sep 17 00:00:00 2001
+From 88a7fb93748177642bec97f6142cf9c053bacb45 Mon Sep 17 00:00:00 2001
 From: Robert Nelson <robertcnelson@gmail.com>
-Date: Mon, 11 Dec 2017 16:16:25 -0600
+Date: Tue, 12 Dec 2017 10:51:20 -0600
 Subject: [PATCH 5/5] merge: aufs4
 
 Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
@@ -42,7 +42,7 @@ Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
  fs/aufs/dir.c                                      |  759 ++++++++
  fs/aufs/dir.h                                      |  131 ++
  fs/aufs/dirren.c                                   | 1315 ++++++++++++++
- fs/aufs/dirren.h                                   |  145 ++
+ fs/aufs/dirren.h                                   |  139 ++
  fs/aufs/dynop.c                                    |  369 ++++
  fs/aufs/dynop.h                                    |   74 +
  fs/aufs/export.c                                   |  836 +++++++++
@@ -96,7 +96,7 @@ Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
  fs/aufs/xattr.c                                    |  355 ++++
  fs/aufs/xino.c                                     | 1418 +++++++++++++++
  include/uapi/linux/aufs_type.h                     |  447 +++++
- 91 files changed, 36802 insertions(+)
+ 91 files changed, 36796 insertions(+)
  create mode 100644 Documentation/ABI/testing/debugfs-aufs
  create mode 100644 Documentation/ABI/testing/sysfs-aufs
  create mode 100644 Documentation/filesystems/aufs/README
@@ -10245,7 +10245,7 @@ index 000000000000..b107309a3d60
 +#endif /* __AUFS_DIR_H__ */
 diff --git a/fs/aufs/dirren.c b/fs/aufs/dirren.c
 new file mode 100644
-index 000000000000..f755c1b409b4
+index 000000000000..3c53b9d50d55
 --- /dev/null
 +++ b/fs/aufs/dirren.c
 @@ -0,0 +1,1315 @@
@@ -10668,7 +10668,7 @@ index 000000000000..f755c1b409b4
 +	case AuBrid_Unset:
 +		return -EINVAL;
 +	case AuBrid_UUID:
-+		err = snprintf(p, sz, "%pU", brid->uuid.__u_bits);
++		err = snprintf(p, sz, "%pU", brid->uuid.b);
 +		break;
 +	case AuBrid_FSID:
 +		err = snprintf(p, sz, "%08x-%08x",
@@ -11566,10 +11566,10 @@ index 000000000000..f755c1b409b4
 +}
 diff --git a/fs/aufs/dirren.h b/fs/aufs/dirren.h
 new file mode 100644
-index 000000000000..878f60ddb736
+index 000000000000..7f1790efeb8b
 --- /dev/null
 +++ b/fs/aufs/dirren.h
-@@ -0,0 +1,145 @@
+@@ -0,0 +1,139 @@
 +/*
 + * Copyright (C) 2017 Junjiro R. Okajima
 + *
@@ -11598,18 +11598,12 @@ index 000000000000..878f60ddb736
 +
 +#include <linux/dcache.h>
 +#include <linux/statfs.h>
++#include <linux/uuid.h>
 +#include "hbl.h"
 +
 +#define AuDirren_NHASH 100
 +
 +#ifdef CONFIG_AUFS_DIRREN
-+/* copied from linux/fs/xfs/uuid.h */
-+typedef struct {
-+	unsigned char	__u_bits[16];
-+} uuid_t;
-+
-+#define __UUID_TMPLT		"01234567-0123-4567-0123-456701234567"
-+
 +enum au_brid_type {
 +	AuBrid_Unset,
 +	AuBrid_UUID,
@@ -11628,7 +11622,7 @@ index 000000000000..878f60ddb736
 +
 +/* 20 is the max digits length of ulong 64 */
 +/* brid-type "_" uuid "_" inum */
-+#define AUFS_DIRREN_FNAME_SZ	(1 + 1 + sizeof(__UUID_TMPLT) + 20)
++#define AUFS_DIRREN_FNAME_SZ	(1 + 1 + UUID_STRING_LEN + 20)
 +#define AUFS_DIRREN_ENV_VAL_SZ	(AUFS_DIRREN_FNAME_SZ + 1 + 20)
 +
 +struct au_dr_hino {
@@ -37086,7 +37080,7 @@ index 000000000000..6c12fe667a27
 +}
 diff --git a/include/uapi/linux/aufs_type.h b/include/uapi/linux/aufs_type.h
 new file mode 100644
-index 000000000000..95a149ece9a0
+index 000000000000..4eeccec22b54
 --- /dev/null
 +++ b/include/uapi/linux/aufs_type.h
 @@ -0,0 +1,447 @@
@@ -37131,7 +37125,7 @@ index 000000000000..95a149ece9a0
 +
 +#include <linux/limits.h>
 +
-+#define AUFS_VERSION	"4.12-20171106"
++#define AUFS_VERSION	"4.13-20171106"
 +
 +/* todo? move this to linux-2.6.19/include/magic.h */
 +#define AUFS_SUPER_MAGIC	('a' << 24 | 'u' << 16 | 'f' << 8 | 's')

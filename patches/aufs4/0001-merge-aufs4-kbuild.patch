@@ -1,6 +1,6 @@
-From ec7dd6150356074a13c5f404e8ae93cdbcb19c51 Mon Sep 17 00:00:00 2001
+From 6c5cfc51b1c4733d70705f687364ca69244e20df Mon Sep 17 00:00:00 2001
 From: Robert Nelson <robertcnelson@gmail.com>
-Date: Mon, 11 Dec 2017 16:16:21 -0600
+Date: Tue, 12 Dec 2017 10:51:15 -0600
 Subject: [PATCH 1/5] merge: aufs4-kbuild
 
 Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
@@ -10,10 +10,10 @@ Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
  2 files changed, 2 insertions(+)
 
 diff --git a/fs/Kconfig b/fs/Kconfig
-index b0e42b6a96b9..7fa4b682b474 100644
+index 7aee6d699fd6..ec92031204c5 100644
 --- a/fs/Kconfig
 +++ b/fs/Kconfig
-@@ -249,6 +249,7 @@ source "fs/pstore/Kconfig"
+@@ -248,6 +248,7 @@ source "fs/pstore/Kconfig"
  source "fs/sysv/Kconfig"
  source "fs/ufs/Kconfig"
  source "fs/exofs/Kconfig"
