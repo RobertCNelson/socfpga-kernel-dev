@@ -212,8 +212,8 @@ local_patch () {
 }
 
 external_git
-aufs4
-rt
+#aufs4
+#rt
 #local_patch
 
 pre_backports () {
