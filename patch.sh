@@ -98,7 +98,7 @@ cherrypick () {
 }
 
 external_git () {
-	git_tag="socfpga-4.9"
+	git_tag="socfpga-4.9.78-ltsi"
 	echo "pulling: ${git_tag}"
 	${git_bin} pull --no-edit ${git_patchset} ${git_tag}
 	${git_bin} describe
