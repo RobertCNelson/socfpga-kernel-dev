@@ -98,7 +98,7 @@ cherrypick () {
 }
 
 external_git () {
-	git_tag="socfpga-4.9.78-ltsi"
+	git_tag="socfpga-4.14.73-ltsi"
 	echo "pulling: ${git_tag}"
 	${git_bin} pull --no-edit ${git_patchset} ${git_tag}
 	${git_bin} describe
@@ -328,7 +328,7 @@ packaging () {
 		cp -v "${DIR}/3rdparty/packaging/Makefile" "${DIR}/KERNEL/scripts/package"
 		cp -v "${DIR}/3rdparty/packaging/builddeb" "${DIR}/KERNEL/scripts/package"
 		#Needed for v4.11.x and less
-		patch -p1 < "${DIR}/patches/packaging/0002-Revert-deb-pkg-Remove-the-KBUILD_IMAGE-workaround.patch"
+		#patch -p1 < "${DIR}/patches/packaging/0002-Revert-deb-pkg-Remove-the-KBUILD_IMAGE-workaround.patch"
 		${git_bin} commit -a -m 'packaging: sync builddeb changes' -s
 		${git_bin} format-patch -1 -o "${DIR}/patches/packaging"
 		exit 2
