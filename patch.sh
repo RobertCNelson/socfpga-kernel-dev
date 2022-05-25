@@ -98,7 +98,8 @@ cherrypick () {
 }
 
 external_git () {
-	git_tag="socfpga-4.14.130-ltsi"
+	#https://github.com/altera-opensource/linux-socfpga/releases/tag/rel_socfpga-4.14.130-ltsi_21.10.01_pr
+	git_tag="rel_socfpga-4.14.130-ltsi_21.10.01_pr"
 	echo "pulling: ${git_tag}"
 	${git_bin} pull --no-edit ${git_patchset} ${git_tag}
 	${git_bin} describe
