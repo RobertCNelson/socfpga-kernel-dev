@@ -81,17 +81,16 @@ make_deb () {
 	#Just use "linux-upstream"...
 	#https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/scripts/package/builddeb?id=3716001bcb7f5822382ac1f2f54226b87312cc6b
 	build_opts="${build_opts} KDEB_SOURCENAME=linux-upstream"
+	build_opts="${build_opts} KDEB_COMPRESS=xz"
 
 	echo "-----------------------------"
 	echo "make ${build_opts} CROSS_COMPILE="${CC}" bindeb-pkg"
 	echo "-----------------------------"
-	fakeroot make ${build_opts} CROSS_COMPILE="${CC}" bindeb-pkg
+	make ${build_opts} CROSS_COMPILE="${CC}" bindeb-pkg
 
+	mv "${DIR}"/*.buildinfo "${DIR}/deploy/" || true
 	mv "${DIR}"/*.changes "${DIR}/deploy/" || true
 	mv "${DIR}"/*.deb "${DIR}/deploy/" || true
-	mv "${DIR}"/*.debian.tar.gz "${DIR}/deploy/" || true
-	mv "${DIR}"/*.dsc "${DIR}/deploy/" || true
-	mv "${DIR}"/*.orig.tar.gz "${DIR}/deploy/" || true
 
 	KERNEL_UTS=$(cat "${DIR}/KERNEL/include/generated/utsrelease.h" | awk '{print $3}' | sed 's/\"//g' )
 
